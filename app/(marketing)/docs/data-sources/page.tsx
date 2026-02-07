@@ -421,19 +421,19 @@ export default function DataSourcesDocsPage() {
               name: "Planet",
               description:
                 "PlanetScope (3m daily), SkySat (0.5m tasking)",
-              badge: "Q2 2025",
+              badge: "2025",
             },
             {
               name: "Maxar",
               description:
                 "WorldView Legion (0.3m), archive and tasking",
-              badge: "Q3 2025",
+              badge: "2025",
             },
             {
               name: "Capella Space",
               description:
                 "SAR imagery (0.5m), all-weather day/night capability",
-              badge: "Q3 2025",
+              badge: "2025",
             },
           ].map((source) => (
             <div
@@ -463,10 +463,10 @@ export default function DataSourcesDocsPage() {
           &larr; Processing
         </Link>
         <Link
-          href="/docs"
+          href="/docs/sdks"
           className="text-sm text-primary hover:underline"
         >
-          Back to Getting Started &rarr;
+          SDKs &amp; Examples &rarr;
         </Link>
       </div>
     </div>
