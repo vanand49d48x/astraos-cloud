@@ -64,12 +64,49 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   );
 }
 
+const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith("https://") ||
+  process.env.AUTH_URL?.startsWith("https://");
+const cookiePrefix = useSecureCookies ? "__Secure-" : "";
+const hostName = new URL(
+  process.env.NEXTAUTH_URL || process.env.AUTH_URL || "http://localhost:3000"
+).hostname;
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: hasDatabase ? PrismaAdapter(prisma) : undefined,
   session: { strategy: "jwt" },
+  trustHost: true,
   pages: {
     signIn: "/login",
     newUser: "/onboarding",
+  },
+  cookies: {
+    pkceCodeVerifier: {
+      name: `${cookiePrefix}next-auth.pkce.code_verifier`,
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: useSecureCookies,
+      },
+    },
+    state: {
+      name: `${cookiePrefix}next-auth.state`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: useSecureCookies,
+      },
+    },
+    nonce: {
+      name: `${cookiePrefix}next-auth.nonce`,
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: useSecureCookies,
+      },
+    },
   },
   providers,
   callbacks: {
