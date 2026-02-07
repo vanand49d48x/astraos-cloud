@@ -183,12 +183,7 @@ export default function SearchDocsPage() {
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-foreground">cURL</h3>
           <CodeBlock
-            code={`curl "https://astraos.cloud/api/v1/search?\\
-  bbox=-122.5,37.5,-122.0,38.0&\\
-  datetime=2025-01-01/2025-02-01&\\
-  collections=sentinel-2-l2a&\\
-  cloud_cover_lt=15&\\
-  limit=3" \\
+            code={`curl "https://astraos.cloud/api/v1/search?bbox=-122.5,37.5,-122.0,38.0&datetime=2025-01-01/2025-02-01&collections=sentinel-2-l2a&cloud_cover_lt=15&limit=3" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
             language="bash"
             filename="terminal"

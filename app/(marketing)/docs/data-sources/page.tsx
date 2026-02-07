@@ -137,11 +137,7 @@ export default function DataSourcesDocsPage() {
           </div>
         </div>
         <CodeBlock
-          code={`curl "https://astraos.cloud/api/v1/search?\\
-  bbox=-122.5,37.5,-122.0,38.0&\\
-  datetime=2025-01-01/2025-02-01&\\
-  collections=sentinel-2-l2a&\\
-  cloud_cover_lt=15" \\
+          code={`curl "https://astraos.cloud/api/v1/search?bbox=-122.5,37.5,-122.0,38.0&datetime=2025-01-01/2025-02-01&collections=sentinel-2-l2a&cloud_cover_lt=15" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
           language="bash"
           filename="Search Sentinel-2"
@@ -246,11 +242,7 @@ export default function DataSourcesDocsPage() {
           </div>
         </div>
         <CodeBlock
-          code={`curl "https://astraos.cloud/api/v1/search?\\
-  bbox=-122.5,37.5,-122.0,38.0&\\
-  datetime=2025-01-01/2025-02-01&\\
-  collections=landsat-c2-l2&\\
-  cloud_cover_lt=20" \\
+          code={`curl "https://astraos.cloud/api/v1/search?bbox=-122.5,37.5,-122.0,38.0&datetime=2025-01-01/2025-02-01&collections=landsat-c2-l2&cloud_cover_lt=20" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
           language="bash"
           filename="Search Landsat"

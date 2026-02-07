@@ -231,10 +231,7 @@ export default function AssetsDocsPage() {
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-foreground">cURL</h3>
           <CodeBlock
-            code={`curl "https://astraos.cloud/api/v1/assets?\\
-  scene_id=sentinel-2:S2B_MSIL2A_20250115T184929&\\
-  bands=red,nir&\\
-  format=cog" \\
+            code={`curl "https://astraos.cloud/api/v1/assets?scene_id=sentinel-2:S2B_MSIL2A_20250115T184929&bands=red,nir&format=cog" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
             language="bash"
             filename="terminal"
