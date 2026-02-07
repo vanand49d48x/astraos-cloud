@@ -1,5 +1,5 @@
 {
-  "name": "astraos-init",
+  "name": "astraos",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,15 +9,40 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.11.1",
+    "@mdx-js/loader": "^3.1.1",
+    "@mdx-js/react": "^3.1.1",
+    "@next/mdx": "^16.1.6",
+    "@prisma/client": "^6.19.2",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.3",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.33.0",
+    "geotiff": "^3.0.0",
+    "lucide-react": "^0.563.0",
+    "maplibre-gl": "^5.17.0",
+    "nanoid": "^5.1.6",
     "next": "16.1.6",
+    "next-auth": "^5.0.0-beta.30",
+    "next-themes": "^0.4.6",
+    "p-limit": "^7.3.0",
+    "prisma": "^6.19.2",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-globe.gl": "^2.37.0",
+    "react-map-gl": "^8.1.0",
+    "recharts": "^3.7.0",
+    "tailwind-merge": "^3.4.0",
+    "three": "^0.182.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/mdx": "^2.0.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.182.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
