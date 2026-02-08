@@ -1,15 +1,14 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Search,
-  Layers,
   Cloud,
   Calendar,
-  MapPin,
   ChevronRight,
   Copy,
   Check,
@@ -17,6 +16,15 @@ import {
   X,
 } from "lucide-react";
 import { PRESET_LOCATIONS } from "@/lib/constants";
+
+const ExplorerMap = dynamic(
+  () => import("@/components/dashboard/explorer-map"),
+  { ssr: false, loading: () => (
+    <div className="w-full h-full bg-card flex items-center justify-center">
+      <Loader2 className="w-8 h-8 text-primary animate-spin" />
+    </div>
+  )}
+);
 
 interface STACItem {
   id: string;
@@ -247,87 +255,14 @@ export default function ExplorerPage() {
 
         {/* Map + Scene detail panel */}
         <div className="lg:col-span-2 space-y-4">
-          {/* Map placeholder — MapLibre GL goes here */}
-          <div className="bg-card border border-white/[0.06] rounded-xl overflow-hidden h-[400px] relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0a1628] to-[#0d1f3c]">
-              {/* Stylized map background */}
-              <svg
-                viewBox="0 0 800 400"
-                className="w-full h-full opacity-20"
-                preserveAspectRatio="xMidYMid slice"
-              >
-                {/* Grid lines */}
-                {Array.from({ length: 20 }).map((_, i) => (
-                  <line
-                    key={`h${i}`}
-                    x1="0"
-                    y1={i * 20}
-                    x2="800"
-                    y2={i * 20}
-                    stroke="rgba(0,212,255,0.3)"
-                    strokeWidth="0.5"
-                  />
-                ))}
-                {Array.from({ length: 40 }).map((_, i) => (
-                  <line
-                    key={`v${i}`}
-                    x1={i * 20}
-                    y1="0"
-                    x2={i * 20}
-                    y2="400"
-                    stroke="rgba(0,212,255,0.3)"
-                    strokeWidth="0.5"
-                  />
-                ))}
-                {/* Stylized landmass shapes */}
-                <path
-                  d="M200,120 Q250,100 300,130 T400,110 Q450,140 380,170 Q300,190 220,160 Z"
-                  fill="rgba(0,212,255,0.08)"
-                  stroke="rgba(0,212,255,0.2)"
-                />
-                <path
-                  d="M500,200 Q550,180 600,210 T700,200 Q720,230 650,250 Q580,260 510,240 Z"
-                  fill="rgba(0,212,255,0.08)"
-                  stroke="rgba(0,212,255,0.2)"
-                />
-              </svg>
-
-              {/* Search indicator */}
-              {bbox && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="relative">
-                    <div className="w-32 h-24 border-2 border-primary/60 rounded bg-primary/10 animate-pulse" />
-                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-primary whitespace-nowrap">
-                      <MapPin className="w-3 h-3 inline mr-1" />
-                      {bbox.split(",").slice(0, 2).join(", ")}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Map controls overlay */}
-            <div className="absolute top-3 right-3 flex flex-col gap-1">
-              <button className="w-8 h-8 bg-card/80 border border-white/10 rounded-lg flex items-center justify-center text-sm hover:bg-card">
-                +
-              </button>
-              <button className="w-8 h-8 bg-card/80 border border-white/10 rounded-lg flex items-center justify-center text-sm hover:bg-card">
-                −
-              </button>
-            </div>
-
-            <div className="absolute bottom-3 left-3">
-              <div className="flex items-center gap-2 bg-card/80 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-muted-foreground">
-                <Layers className="w-3 h-3" />
-                Satellite View
-              </div>
-            </div>
-
-            {loading && (
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                <Loader2 className="w-8 h-8 text-primary animate-spin" />
-              </div>
-            )}
+          {/* Interactive satellite map */}
+          <div className="bg-card border border-white/[0.06] rounded-xl overflow-hidden h-[400px]">
+            <ExplorerMap
+              bbox={bbox}
+              loading={loading}
+              sceneBboxes={results?.features.map((f) => f.bbox).filter(Boolean) as number[][] || []}
+              selectedSceneBbox={selectedScene?.bbox || null}
+            />
           </div>
 
           {/* Scene detail */}
