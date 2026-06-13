@@ -75,7 +75,11 @@ const cookieDomain = isProduction ? ".astraos.cloud" : undefined;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: hasDatabase ? PrismaAdapter(prisma) : undefined,
-  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,   // 30-day lifetime
+    updateAge: 24 * 60 * 60,      // re-issue cookie daily on activity
+  },
   trustHost: true,
   pages: {
     signIn: "/login",

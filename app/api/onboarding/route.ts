@@ -35,12 +35,14 @@ export async function POST(request: NextRequest) {
 
   const response = NextResponse.json({ ok: true });
   // Set a long-lived cookie so the middleware knows onboarding is done
+  const isProd = process.env.NODE_ENV === "production";
   response.cookies.set("astra_onboarded", "1", {
     httpOnly: false,
     path: "/",
     maxAge: 60 * 60 * 24 * 365 * 10, // 10 years
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: isProd,
+    domain: isProd ? ".astraos.cloud" : undefined,
   });
   return response;
 }
