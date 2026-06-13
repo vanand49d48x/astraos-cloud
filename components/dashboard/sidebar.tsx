@@ -16,6 +16,7 @@ import {
   LogOut,
   Webhook,
   Eye,
+  TrendingUp,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
@@ -26,6 +27,7 @@ const navItems = [
   { label: "Explorer", href: "/dashboard/explorer", icon: Map },
   { label: "Webhooks", href: "/dashboard/webhooks", icon: Webhook },
   { label: "Monitors", href: "/dashboard/monitors", icon: Eye },
+  { label: "Time Series", href: "/dashboard/timeseries", icon: TrendingUp },
   { label: "Usage", href: "/dashboard/usage", icon: BarChart3 },
   { label: "Billing", href: "/dashboard/billing", icon: CreditCard },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
