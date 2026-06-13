@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
-import { Key, Plus, Copy, Trash2, Check, AlertTriangle, Zap } from "lucide-react";
+import { Key, Plus, Copy, Trash2, Check, AlertTriangle, Zap, Braces } from "lucide-react";
 import Link from "next/link";
 
 interface ApiKey {
@@ -114,13 +114,21 @@ export default function ApiKeysPage() {
             Manage your API keys for accessing the ASTRA OS API
           </p>
         </div>
-        <Button
-          onClick={() => { setCreateError(null); setShowCreate(true); }}
-          disabled={!loading && activeKeys.length >= keyLimit}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Create Key
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link href="/api/v1/graphql" target="_blank">
+            <Button variant="ghost" size="sm" className="gap-1.5 text-xs">
+              <Braces className="w-3.5 h-3.5" />
+              GraphQL Playground
+            </Button>
+          </Link>
+          <Button
+            onClick={() => { setCreateError(null); setShowCreate(true); }}
+            disabled={!loading && activeKeys.length >= keyLimit}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Create Key
+          </Button>
+        </div>
       </div>
 
       {/* Key limit bar */}
