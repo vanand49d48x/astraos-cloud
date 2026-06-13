@@ -2,9 +2,9 @@ import { Hero } from "@/components/marketing/hero";
 import { HowItWorks } from "@/components/marketing/how-it-works";
 import { PainPoints } from "@/components/marketing/pain-points";
 import { LiveSearchDemo } from "@/components/marketing/live-search-demo";
-import { CodeExample } from "@/components/marketing/code-example";
+import { ForDevelopers } from "@/components/marketing/for-developers";
+import { ForBusiness } from "@/components/marketing/for-business";
 import { DataSources } from "@/components/marketing/data-sources";
-import { UseCasesSection } from "@/components/marketing/use-cases-section";
 import { CTASection } from "@/components/marketing/cta-section";
 
 export default function HomePage() {
@@ -15,7 +15,7 @@ export default function HomePage() {
         <Hero />
       </section>
 
-      {/* 2. How it works — 3 steps, code snippets */}
+      {/* 2. How it works — 3 steps */}
       <section id="how-it-works">
         <HowItWorks />
       </section>
@@ -30,19 +30,19 @@ export default function HomePage() {
         <LiveSearchDemo />
       </section>
 
-      {/* 5. Code examples */}
-      <section id="code">
-        <CodeExample />
+      {/* 5. For Developers — code editor + live response */}
+      <section id="developers">
+        <ForDevelopers />
       </section>
 
-      {/* 6. Data sources */}
+      {/* 6. For Business — satellite imagery + outcome metrics */}
+      <section id="business">
+        <ForBusiness />
+      </section>
+
+      {/* 7. Data sources */}
       <section id="data-sources">
         <DataSources />
-      </section>
-
-      {/* 7. Use cases */}
-      <section id="use-cases">
-        <UseCasesSection />
       </section>
 
       {/* 8. CTA */}
