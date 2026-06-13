@@ -60,7 +60,13 @@ function getThumbnail(scene: STACItem): string | null {
 
 export default function ExplorerPage() {
   const [bbox, setBbox] = useState("-122.52,37.70,-122.35,37.82");
-  const [dateRange, setDateRange] = useState("2024-06-01/2024-12-31");
+  // Default to last 90 days so results are always near-real-time
+  const [dateRange, setDateRange] = useState(() => {
+    const now = new Date();
+    const past = new Date(now);
+    past.setDate(past.getDate() - 90);
+    return `${past.toISOString().slice(0, 10)}/${now.toISOString().slice(0, 10)}`;
+  });
   const [cloudCover, setCloudCover] = useState("30");
   const [collections, setCollections] = useState("");
   const [results, setResults] = useState<SearchResult | null>(null);
