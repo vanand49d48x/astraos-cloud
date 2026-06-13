@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "astra-sdk"
+version = "0.1.0"
+description = "Official Python SDK for ASTRA OS — unified satellite imagery API"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+keywords = ["satellite", "earth-observation", "stac", "geospatial", "astra"]
+dependencies = []
+
+[project.urls]
+Homepage = "https://astraos.cloud"
+Documentation = "https://astraos.cloud/docs"
+Repository = "https://github.com/astraos/astra-python"
+
+[tool.hatch.build.targets.wheel]
+packages = ["astra"]

@@ -27,6 +27,8 @@ export async function GET() {
     return NextResponse.json({
       plan: teamMember.team.plan,
       stripeCustomerId: teamMember.team.stripeCustomerId,
+      subscriptionStatus: teamMember.team.subscriptionStatus,
+      currentPeriodEnd: teamMember.team.currentPeriodEnd,
       history,
     });
   } catch (err) {

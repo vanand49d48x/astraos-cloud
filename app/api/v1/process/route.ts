@@ -1,67 +1,67 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { validateApiKey } from "@/lib/auth-helpers";
+import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-/**
- * POST /api/v1/process
- * Submit a processing job (NDVI, change detection, COG conversion).
- * Returns a job ID for polling.
- *
- * Body:
- *   operation - "ndvi" | "change_detection" | "cog_convert"
- *   scene_id  - ASTRA scene ID
- *   bbox      - Optional crop bbox
- *   params    - Operation-specific parameters
- */
-export async function POST(request: Request) {
+const VALID_OPS = ["ndvi", "change_detection", "cog_convert"] as const;
+
+export async function POST(request: NextRequest) {
+  const apiKey = await validateApiKey(request);
+  if (!apiKey) {
+    return NextResponse.json({ error: "Invalid or missing API key" }, { status: 401 });
+  }
+
+  let body: Record<string, unknown>;
   try {
-    const body = await request.json();
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
-    const { operation, scene_id, bbox, ...rest } = body;
+  const { operation, scene_id, bbox, ...rest } = body as {
+    operation?: string;
+    scene_id?: string;
+    bbox?: number[];
+    [k: string]: unknown;
+  };
 
-    if (!operation) {
-      return NextResponse.json(
-        { error: "operation is required (ndvi, change_detection, cog_convert)" },
-        { status: 400 }
-      );
-    }
-
-    if (!scene_id) {
-      return NextResponse.json(
-        { error: "scene_id is required" },
-        { status: 400 }
-      );
-    }
-
-    const validOps = ["ndvi", "change_detection", "cog_convert"];
-    if (!validOps.includes(operation)) {
-      return NextResponse.json(
-        { error: `Invalid operation. Must be one of: ${validOps.join(", ")}` },
-        { status: 400 }
-      );
-    }
-
-    // In production, this creates a ProcessingJob in the database.
-    // For now, return a placeholder response showing the API structure.
-    const jobId = `job_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-
+  if (!operation) {
     return NextResponse.json(
-      {
-        job_id: jobId,
-        status: "queued",
-        operation,
-        scene_id,
-        bbox,
-        poll_url: `/api/v1/process/${jobId}`,
-        created_at: new Date().toISOString(),
-      },
-      { status: 202 }
-    );
-  } catch (err: any) {
-    console.error("Process submit error:", err);
-    return NextResponse.json(
-      { error: err.message || "Internal server error" },
-      { status: 500 }
+      { error: `operation is required. One of: ${VALID_OPS.join(", ")}` },
+      { status: 400 }
     );
   }
+  if (!VALID_OPS.includes(operation as (typeof VALID_OPS)[number])) {
+    return NextResponse.json(
+      { error: `Invalid operation. Must be one of: ${VALID_OPS.join(", ")}` },
+      { status: 400 }
+    );
+  }
+  if (!scene_id) {
+    return NextResponse.json({ error: "scene_id is required" }, { status: 400 });
+  }
+
+  const job = await prisma.processingJob.create({
+    data: {
+      teamId: apiKey.teamId,
+      apiKeyId: apiKey.id,
+      operation,
+      params: { scene_id, bbox: bbox ?? null, ...rest },
+      status: "queued",
+    },
+  });
+
+  return NextResponse.json(
+    {
+      job_id: job.id,
+      status: job.status,
+      operation: job.operation,
+      scene_id,
+      bbox: bbox ?? null,
+      poll_url: `/api/v1/process/${job.id}`,
+      created_at: job.createdAt.toISOString(),
+    },
+    { status: 202 }
+  );
 }

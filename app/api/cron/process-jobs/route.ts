@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
         await prisma.processingJob.update({
           where: { id: job.id },
           data: {
-            status: "completed",
+            status: "complete",
             resultUrl,
             computeMs,
             completedAt: new Date(),
