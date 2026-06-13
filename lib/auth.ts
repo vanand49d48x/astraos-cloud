@@ -66,22 +66,33 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   );
 }
 
-const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith("https://") ||
-  process.env.AUTH_URL?.startsWith("https://");
+const isProduction = process.env.NODE_ENV === "production";
+const useSecureCookies = isProduction;
 const cookiePrefix = useSecureCookies ? "__Secure-" : "";
-const hostName = new URL(
-  process.env.NEXTAUTH_URL || process.env.AUTH_URL || "http://localhost:3000"
-).hostname;
+// Apex domain with leading dot so the cookie is shared between
+// astraos.cloud and www.astraos.cloud — prevents "always login" on redirect.
+const cookieDomain = isProduction ? ".astraos.cloud" : undefined;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: hasDatabase ? PrismaAdapter(prisma) : undefined,
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   trustHost: true,
   pages: {
     signIn: "/login",
     newUser: "/onboarding",
   },
   cookies: {
+    sessionToken: {
+      name: `${cookiePrefix}authjs.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: useSecureCookies,
+        domain: cookieDomain,
+        maxAge: 30 * 24 * 60 * 60,
+      },
+    },
     pkceCodeVerifier: {
       name: `${cookiePrefix}next-auth.pkce.code_verifier`,
       options: {
@@ -89,6 +100,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         sameSite: "none",
         path: "/",
         secure: useSecureCookies,
+        domain: cookieDomain,
       },
     },
     state: {
@@ -98,6 +110,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         sameSite: "lax",
         path: "/",
         secure: useSecureCookies,
+        domain: cookieDomain,
       },
     },
     nonce: {
@@ -107,6 +120,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         sameSite: "none",
         path: "/",
         secure: useSecureCookies,
+        domain: cookieDomain,
       },
     },
   },
