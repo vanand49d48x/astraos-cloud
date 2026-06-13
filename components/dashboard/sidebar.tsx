@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  Webhook,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
@@ -22,6 +23,7 @@ const navItems = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { label: "API Keys", href: "/dashboard/api-keys", icon: Key },
   { label: "Explorer", href: "/dashboard/explorer", icon: Map },
+  { label: "Webhooks", href: "/dashboard/webhooks", icon: Webhook },
   { label: "Usage", href: "/dashboard/usage", icon: BarChart3 },
   { label: "Billing", href: "/dashboard/billing", icon: CreditCard },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },

@@ -74,6 +74,7 @@ model Team {
   apiKeys                ApiKey[]
   usageRecords           UsageRecord[]
   billingHistory         BillingRecord[]
+  webhooks               Webhook[]
   createdAt              DateTime        @default(now())
   updatedAt              DateTime        @updatedAt
 }
@@ -130,6 +131,41 @@ model BillingRecord {
   invoiceUrl String?
   team       Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
+}
+
+model Webhook {
+  id              String            @id @default(cuid())
+  teamId          String
+  name            String
+  url             String
+  secret          String            // HMAC-SHA256 signing secret shown once on creation
+  events          String[]          // e.g. ["imagery.available"]
+  aoiBbox         String?           // "west,south,east,north" — AOI to watch
+  cloudCoverLt    Float?            // only fire when cloud cover < this
+  collections     String[]          // filter to specific collections; empty = all
+  active          Boolean           @default(true)
+  lastTriggeredAt DateTime?
+  team            Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  deliveries      WebhookDelivery[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([teamId, active])
+}
+
+model WebhookDelivery {
+  id          String   @id @default(cuid())
+  webhookId   String
+  event       String
+  payload     Json
+  statusCode  Int?
+  response    String?  @db.Text
+  error       String?
+  success     Boolean  @default(false)
+  attemptedAt DateTime @default(now())
+  webhook     Webhook  @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@index([webhookId, attemptedAt])
 }
 
 model ProcessingJob {
