@@ -75,6 +75,7 @@ model Team {
   usageRecords           UsageRecord[]
   billingHistory         BillingRecord[]
   webhooks               Webhook[]
+  monitors               Monitor[]
   createdAt              DateTime        @default(now())
   updatedAt              DateTime        @updatedAt
 }
@@ -197,6 +198,45 @@ model StacCache {
   updatedAt    DateTime @updatedAt
 
   @@index([expiresAt])
+}
+
+model Monitor {
+  id            String          @id @default(cuid())
+  teamId        String
+  name          String
+  watchFor      String          @db.Text
+  aoiBbox       String          // "west,south,east,north"
+  indices       String[]        @default(["ndvi", "nbr", "ndwi"])
+  collections   String[]        @default(["sentinel-2-l2a"])
+  cloudCoverLt  Float           @default(30)
+  active        Boolean         @default(true)
+  lastCheckedAt DateTime?
+  team          Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  reports       MonitorReport[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([teamId, active])
+}
+
+model MonitorReport {
+  id              String   @id @default(cuid())
+  monitorId       String
+  teamId          String
+  baselineDate    String
+  latestDate      String
+  baselineSceneId String
+  latestSceneId   String
+  indexChanges    Json
+  llmAnalysis     String   @db.Text
+  significance    String   // "none" | "low" | "medium" | "high" | "critical"
+  summary         String
+  rawData         Json
+  monitor         Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+
+  @@index([monitorId, createdAt])
+  @@index([teamId, createdAt])
 }
 
 model ProviderHit {

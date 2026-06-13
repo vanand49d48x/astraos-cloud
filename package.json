@@ -10,6 +10,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.1",
     "@auth/prisma-adapter": "^2.11.1",
     "@graphql-tools/schema": "^10.0.33",
     "@mdx-js/loader": "^3.1.1",
