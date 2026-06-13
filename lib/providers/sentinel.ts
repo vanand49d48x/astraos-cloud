@@ -26,7 +26,7 @@ export class SentinelAdapter extends BaseProviderAdapter {
     // Cloud cover filtering is NOT reliably supported server-side
     const body: Record<string, any> = {
       bbox: params.bbox,
-      datetime: params.datetime,
+      datetime: this.toRfc3339Interval(params.datetime),
       limit: params.limit || 10,
       collections: ["sentinel-2-l2a"],
     };

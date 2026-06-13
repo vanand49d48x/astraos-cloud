@@ -55,6 +55,23 @@ export abstract class BaseProviderAdapter implements ProviderAdapter {
     return astraId;
   }
 
+  /**
+   * Convert a date-interval string to full RFC3339 so strict APIs accept it.
+   * "2024-06-01/2024-12-31" → "2024-06-01T00:00:00Z/2024-12-31T23:59:59Z"
+   * Already-RFC3339 strings pass through unchanged.
+   */
+  protected toRfc3339Interval(datetime: string): string {
+    return datetime
+      .split("/")
+      .map((part, i) => {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(part)) {
+          return i === 0 ? `${part}T00:00:00Z` : `${part}T23:59:59Z`;
+        }
+        return part;
+      })
+      .join("/");
+  }
+
   /** Make a fetch request with timeout and error handling */
   protected async fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
     const controller = new AbortController();

@@ -23,7 +23,7 @@ export class LandsatAdapter extends BaseProviderAdapter {
   async search(params: SearchParams): Promise<STACItemCollection> {
     const body: Record<string, any> = {
       bbox: params.bbox,
-      datetime: params.datetime,
+      datetime: this.toRfc3339Interval(params.datetime),
       limit: params.limit || 10,
       collections: ["landsat-c2l2-sr"],
     };
