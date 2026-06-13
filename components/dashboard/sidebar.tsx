@@ -18,8 +18,8 @@ import {
   Eye,
   TrendingUp,
 } from "lucide-react";
-import { signOut } from "next-auth/react";
 import { useState } from "react";
+import { signOutAction } from "@/lib/actions/auth";
 
 const navItems = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -90,17 +90,16 @@ export function Sidebar() {
 
       {/* Footer */}
       <div className="p-3 border-t border-white/[0.06]">
-        <button
-          onClick={async () => {
-            await signOut({ redirect: false });
-            window.location.href = "/";
-          }}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all w-full"
-          title={collapsed ? "Sign Out" : undefined}
-        >
-          <LogOut className="w-4 h-4 flex-shrink-0" />
-          {!collapsed && <span>Sign Out</span>}
-        </button>
+        <form action={signOutAction}>
+          <button
+            type="submit"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all w-full"
+            title={collapsed ? "Sign Out" : undefined}
+          >
+            <LogOut className="w-4 h-4 flex-shrink-0" />
+            {!collapsed && <span>Sign Out</span>}
+          </button>
+        </form>
       </div>
     </aside>
   );
