@@ -11,6 +11,11 @@ export default auth((req: any) => {
   const pathname = req.nextUrl.pathname as string;
   const session = req.auth; // populated by Auth.js after JWT validation
 
+  // Authenticated user hitting home/login → go straight to dashboard
+  if (session && (pathname === "/" || pathname === "/login")) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
   // Unauthenticated → login
   if (pathname.startsWith("/dashboard") || pathname.startsWith("/onboarding")) {
     if (!session) {
@@ -40,5 +45,5 @@ export default auth((req: any) => {
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/onboarding/:path*", "/onboarding"],
+  matcher: ["/", "/login", "/dashboard/:path*", "/onboarding/:path*", "/onboarding"],
 };
