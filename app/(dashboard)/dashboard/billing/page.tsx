@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PRICING_TIERS } from "@/lib/constants";
 import { CreditCard, Check, ArrowRight, Zap, ExternalLink } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 
 type BillingData = {
   plan: string;
@@ -26,13 +25,20 @@ export default function BillingPage() {
   const [data, setData] = useState<BillingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const searchParams = useSearchParams();
-  const justUpgraded = searchParams.get("success") === "true";
+  const [justUpgraded, setJustUpgraded] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setJustUpgraded(params.get("success") === "true");
+  }, []);
 
   useEffect(() => {
     fetch("/api/billing")
       .then((r) => r.json())
-      .then(setData)
+      .then((json) => {
+        if (json && !json.error) setData(json);
+      })
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

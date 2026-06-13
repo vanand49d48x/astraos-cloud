@@ -32,9 +32,10 @@ export async function GET() {
       history,
     });
   } catch (err) {
-    console.error("Billing API error:", err);
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("Billing API error:", message, err);
     return NextResponse.json(
-      { error: "Failed to load billing data" },
+      { error: "Failed to load billing data", detail: message },
       { status: 500 }
     );
   }
