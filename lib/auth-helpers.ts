@@ -43,16 +43,32 @@ export async function getSessionWithTeam() {
   if (!session?.user?.id) return null;
 
   try {
-    const teamMember = await prisma.teamMember.findFirst({
+    let teamMember = await prisma.teamMember.findFirst({
       where: { userId: session.user.id },
-      include: {
-        team: true,
-        user: true,
-      },
+      include: { team: true, user: true },
       orderBy: { team: { createdAt: "asc" } },
     });
 
-    if (!teamMember) return null;
+    // Auto-create a team if this user has none (can happen when DB was
+    // unavailable during the sign-in jwt callback that normally creates it).
+    if (!teamMember) {
+      const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+      if (!user) return null;
+
+      const team = await prisma.team.create({
+        data: {
+          name: user.name ? `${user.name}'s Team` : "My Team",
+          members: { create: { userId: user.id, role: "owner" } },
+        },
+      });
+
+      teamMember = await prisma.teamMember.findFirst({
+        where: { userId: user.id, teamId: team.id },
+        include: { team: true, user: true },
+      });
+
+      if (!teamMember) return null;
+    }
 
     return {
       user: teamMember.user,

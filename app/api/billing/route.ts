@@ -9,13 +9,29 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const teamMember = await prisma.teamMember.findFirst({
+    let teamMember = await prisma.teamMember.findFirst({
       where: { userId: session.user.id },
       include: { team: true },
     });
 
+    // Auto-create team if missing (DB was down during sign-in)
     if (!teamMember) {
-      return NextResponse.json({ plan: "free", history: [] });
+      const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+      if (user) {
+        const team = await prisma.team.create({
+          data: {
+            name: user.name ? `${user.name}'s Team` : "My Team",
+            members: { create: { userId: user.id, role: "owner" } },
+          },
+        });
+        teamMember = await prisma.teamMember.findFirst({
+          where: { userId: user.id, teamId: team.id },
+          include: { team: true },
+        });
+      }
+      if (!teamMember) {
+        return NextResponse.json({ plan: "free", history: [] });
+      }
     }
 
     const history = await prisma.billingRecord.findMany({
