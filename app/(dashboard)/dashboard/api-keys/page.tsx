@@ -61,6 +61,7 @@ export default function ApiKeysPage() {
         const data = await res.json();
         setCreatedKey(data.key);
         setNewKeyName("");
+        setShowCreate(false);
         fetchKeys();
       }
     } catch {
