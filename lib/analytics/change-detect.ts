@@ -13,6 +13,14 @@ import {
   computeIndexChanges,
   estimateSignificance,
 } from "@/lib/ai/change-analysis";
+import {
+  classifyBurnSeverity,
+  classifyFloodChange,
+  classifyVegetation,
+  classifyScene,
+  computeBAI,
+} from "./classify";
+import type { BurnClass, FloodChange, SceneClassification } from "./classify";
 
 export interface ChangeDetectParams {
   aoiBbox: string;             // "west,south,east,north"
@@ -42,6 +50,11 @@ export interface ChangeDetectResult {
   llmAnalysis: string;
   recommendations: string[];
   daysDelta: number;
+  // Planet notebook-derived classifications
+  burnSeverity?: BurnClass;          // dNBR-based (when NBR available)
+  floodChange?: FloodChange;         // dNDWI-based (when NDWI available)
+  baselineClassification?: SceneClassification;
+  latestClassification?: SceneClassification;
 }
 
 function toRfc3339Interval(range: string): string {
@@ -204,6 +217,30 @@ export async function detectChanges(
     recommendations = ["Review the spectral index changes manually.", "Consider enabling AI analysis by configuring ANTHROPIC_API_KEY."];
   }
 
+  // ── Planet notebook-derived classifications ────────────────────────────────
+  const bIdx = baselineIndices;
+  const lIdx = latestIndices;
+
+  // dNBR burn severity (pre_NBR - post_NBR, as per USGS/Planet convention)
+  let burnSeverity: BurnClass | undefined;
+  if (bIdx.nbr && lIdx.nbr) {
+    const dNBR = bIdx.nbr.value - lIdx.nbr.value;
+    burnSeverity = classifyBurnSeverity(dNBR);
+  }
+
+  // Flood change via dNDWI
+  let floodChange: FloodChange | undefined;
+  if (bIdx.ndwi && lIdx.ndwi) {
+    floodChange = classifyFloodChange(bIdx.ndwi.value, lIdx.ndwi.value);
+  }
+
+  // Scene-level land cover classification
+  const toValues = (ix: Record<string, IndexResult>) =>
+    Object.fromEntries(Object.entries(ix).map(([k, v]) => [k, v.value]));
+
+  const baselineClassification = classifyScene(toValues(bIdx));
+  const latestClassification   = classifyScene(toValues(lIdx));
+
   return {
     baseline: {
       sceneId: baselineId,
@@ -225,5 +262,9 @@ export async function detectChanges(
     llmAnalysis,
     recommendations,
     daysDelta,
+    burnSeverity,
+    floodChange,
+    baselineClassification,
+    latestClassification,
   };
 }

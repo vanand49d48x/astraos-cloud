@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TrendingUp, Play, Loader2, AlertTriangle, Info } from "lucide-react";
+import { TrendingUp, Play, Loader2, AlertTriangle, Info, Sprout, Droplets, Flame } from "lucide-react";
 import { TimeSeriesChart } from "@/components/dashboard/timeseries-chart";
 import type { TimeSeriesResult } from "@/lib/analytics/timeseries";
 
@@ -246,6 +246,72 @@ export default function TimeSeriesPage() {
               indices={indices}
             />
           </div>
+
+          {/* Phenology cards */}
+          {Object.keys(result.phenology ?? {}).length > 0 && (
+            <div className="bg-card border border-white/[0.06] rounded-2xl p-6 space-y-4">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <Sprout className="w-4 h-4 text-green-400" />
+                Phenology Metrics
+                <span className="text-xs text-muted-foreground font-normal">(Planet CB_phenometrics patterns)</span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {indices.map((idx) => {
+                  const p = (result.phenology ?? {})[idx];
+                  if (!p || p.validPoints < 3) return null;
+                  return (
+                    <div key={idx} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 space-y-2">
+                      <p className="text-xs font-bold uppercase text-muted-foreground">{idx}</p>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                        {p.peakDate    && <><span className="text-muted-foreground">Peak date</span><span className="font-mono">{p.peakDate}</span></>}
+                        {p.peakValue != null && <><span className="text-muted-foreground">Peak value</span><span className="font-mono text-green-400">{p.peakValue.toFixed(3)}</span></>}
+                        {p.troughValue != null && <><span className="text-muted-foreground">Trough</span><span className="font-mono text-red-400">{p.troughValue.toFixed(3)}</span></>}
+                        {p.greenupDays != null && <><span className="text-muted-foreground">Green-up</span><span className="font-mono">{p.greenupDays}d</span></>}
+                        {p.greeningRate != null && <><span className="text-muted-foreground">Greening rate</span><span className="font-mono">{(p.greeningRate * 30).toFixed(4)}/mo</span></>}
+                        {p.senescenceDays != null && <><span className="text-muted-foreground">Senescence</span><span className="font-mono">{p.senescenceDays}d</span></>}
+                        {p.seasonLengthDays != null && <><span className="text-muted-foreground">Season length</span><span className="font-mono">{p.seasonLengthDays}d</span></>}
+                        <span className="text-muted-foreground">Integral</span><span className="font-mono">{p.seasonalIntegral.toFixed(1)}</span>
+                        {p.stressDips.length > 0 && <><span className="text-muted-foreground">Stress dips</span><span className="font-mono text-orange-400">{p.stressDips.length}</span></>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* VCI cards */}
+          {Object.keys(result.vci ?? {}).length > 0 && (
+            <div className="bg-card border border-white/[0.06] rounded-2xl p-6 space-y-4">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <Droplets className="w-4 h-4 text-blue-400" />
+                Vegetation Condition Index (VCI)
+                <span className="text-xs text-muted-foreground font-normal">current vs historical range</span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {Object.entries(result.vci ?? {}).map(([idx, v]) => (
+                  <div key={idx} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold uppercase text-muted-foreground">{idx}</span>
+                      <span className={`text-lg font-bold ${
+                        v.vci < 35 ? "text-red-400" : v.vci < 65 ? "text-yellow-400" : "text-green-400"
+                      }`}>{v.vci}</span>
+                    </div>
+                    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden mb-2">
+                      <div
+                        className={`h-full rounded-full ${v.vci < 35 ? "bg-red-500" : v.vci < 65 ? "bg-yellow-500" : "bg-green-500"}`}
+                        style={{ width: `${v.vci}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">{v.condition}</p>
+                    <p className="text-xs text-muted-foreground mt-1 font-mono">
+                      {v.historicalMin.toFixed(3)} – {v.historicalMax.toFixed(3)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Missing months note */}
           {result.summary.successfulPoints < result.summary.totalPeriods && (

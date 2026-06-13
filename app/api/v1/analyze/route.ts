@@ -12,6 +12,7 @@ import {
   type IndexResult,
 } from "@/lib/analytics/indices";
 import { fetchPCBandStats, bandsForIndices, PC_S2_BANDS } from "@/lib/analytics/providers";
+import { classifyScene, classifyBurnSeverity, classifyFloodChange } from "@/lib/analytics/classify";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -147,7 +148,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No indices could be computed for this scene" }, { status: 422 });
     }
 
-    const analyticsResult: AnalyticsResult = {
+    // Planet notebook-derived classifications
+    const indexValues = Object.fromEntries(
+      Object.entries(computed).map(([k, v]) => [k, v.value])
+    );
+    const classification = classifyScene(indexValues);
+
+    const analyticsResult: AnalyticsResult & { classification: typeof classification } = {
       sceneId: `planetary-computer:${itemId}`,
       datetime: sceneDateTime,
       provider: "Microsoft Planetary Computer",
@@ -155,6 +162,7 @@ export async function POST(request: NextRequest) {
       bbox: stacItem.bbox ?? null,
       indices: computed,
       bandsUsed: neededBands,
+      classification,
     };
 
     // Log usage

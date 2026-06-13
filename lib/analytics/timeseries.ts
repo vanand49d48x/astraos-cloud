@@ -4,6 +4,9 @@ import { fetchPCBandStats, bandsForIndices } from "./providers";
 import {
   computeNDVI, computeEVI, computeNDWI, computeNDSI, computeNBR,
 } from "./indices";
+import { computeAllPhenology } from "./phenology";
+import type { PhenologyMetrics } from "./phenology";
+import { computeVCI } from "./classify";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -42,10 +45,19 @@ export interface Anomaly {
   direction: "above" | "below";
 }
 
+export interface VCIResult {
+  vci: number;
+  condition: string;
+  historicalMin: number;
+  historicalMax: number;
+}
+
 export interface TimeSeriesResult {
   points: TimeSeriesPoint[];
   trends: Record<string, TrendLine>;
   anomalies: Anomaly[];
+  phenology: Record<string, PhenologyMetrics>;
+  vci: Record<string, VCIResult>;   // Vegetation Condition Index per index
   summary: {
     totalPeriods: number;
     successfulPoints: number;
@@ -294,10 +306,31 @@ export async function buildTimeSeries(
     ? Math.round(cloudValues.reduce((a, v) => a + v, 0) / cloudValues.length * 10) / 10
     : null;
 
+  // ── Phenology (Planet CB_phenometrics patterns) ───────────────────────────
+  const phenology = computeAllPhenology(rawPoints, params.indices);
+
+  // ── VCI — Vegetation Condition Index ─────────────────────────────────────
+  // Uses the historical min/max from this time series as the reference range
+  const vci: Record<string, VCIResult> = {};
+  for (const idx of params.indices) {
+    const values = rawPoints
+      .filter((p) => !p.missing && p.values[idx] != null)
+      .map((p) => p.values[idx] as number);
+    if (values.length >= 3) {
+      const hMin = Math.min(...values);
+      const hMax = Math.max(...values);
+      const latest = values[values.length - 1];
+      const result = computeVCI(latest, hMin, hMax);
+      vci[idx] = { ...result, historicalMin: Math.round(hMin * 10000) / 10000, historicalMax: Math.round(hMax * 10000) / 10000 };
+    }
+  }
+
   return {
     points: rawPoints,
     trends,
     anomalies,
+    phenology,
+    vci,
     summary: {
       totalPeriods: rawPoints.length,
       successfulPoints: successful.length,
