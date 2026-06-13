@@ -5,6 +5,7 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
+import { authConfig } from "./auth.config";
 
 const hasDatabase = !!process.env.DATABASE_URL;
 
@@ -23,21 +24,11 @@ const providers: any[] = [
       const password = credentials.password as string;
 
       try {
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
-
+        const user = await prisma.user.findUnique({ where: { email } });
         if (!user || !user.password) return null;
-
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) return null;
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-        };
+        return { id: user.id, email: user.email, name: user.name, image: user.image };
       } catch {
         return null;
       }
@@ -45,7 +36,6 @@ const providers: any[] = [
   }),
 ];
 
-// Only add OAuth providers if credentials are configured
 if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
   providers.push(
     GitHub({
@@ -66,76 +56,16 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   );
 }
 
-const isProduction = process.env.NODE_ENV === "production";
-const useSecureCookies = isProduction;
-const cookiePrefix = useSecureCookies ? "__Secure-" : "";
-// Apex domain with leading dot so the cookie is shared between
-// astraos.cloud and www.astraos.cloud — prevents "always login" on redirect.
-const cookieDomain = isProduction ? ".astraos.cloud" : undefined;
-
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   adapter: hasDatabase ? PrismaAdapter(prisma) : undefined,
-  session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60,   // 30-day lifetime
-    updateAge: 24 * 60 * 60,      // re-issue cookie daily on activity
-  },
-  trustHost: true,
-  pages: {
-    signIn: "/login",
-    newUser: "/onboarding",
-  },
-  cookies: {
-    sessionToken: {
-      name: `${cookiePrefix}authjs.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: useSecureCookies,
-        domain: cookieDomain,
-        maxAge: 30 * 24 * 60 * 60,
-      },
-    },
-    pkceCodeVerifier: {
-      name: `${cookiePrefix}next-auth.pkce.code_verifier`,
-      options: {
-        httpOnly: true,
-        sameSite: "none",
-        path: "/",
-        secure: useSecureCookies,
-        domain: cookieDomain,
-      },
-    },
-    state: {
-      name: `${cookiePrefix}next-auth.state`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: useSecureCookies,
-        domain: cookieDomain,
-      },
-    },
-    nonce: {
-      name: `${cookiePrefix}next-auth.nonce`,
-      options: {
-        httpOnly: true,
-        sameSite: "none",
-        path: "/",
-        secure: useSecureCookies,
-        domain: cookieDomain,
-      },
-    },
-  },
   providers,
   callbacks: {
-    async jwt({ token, user, trigger }) {
-      if (user) {
-        token.id = user.id;
-      }
+    ...authConfig.callbacks,
+    async jwt({ token, user, trigger }: any) {
+      if (user) token.id = user.id;
 
-      // On sign in, ensure user has a default team
+      // Fetch/create team on first sign-in (Node.js only — Prisma available)
       if (trigger === "signIn" && token.id && hasDatabase) {
         try {
           const teamMember = await prisma.teamMember.findFirst({
@@ -148,10 +78,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               data: {
                 name: "My Team",
                 members: {
-                  create: {
-                    userId: token.id as string,
-                    role: "owner",
-                  },
+                  create: { userId: token.id as string, role: "owner" },
                 },
               },
             });
@@ -165,15 +92,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
 
       return token;
-    },
-    async session({ session, token }) {
-      if (token.id) {
-        session.user.id = token.id as string;
-      }
-      if (token.teamId) {
-        (session as any).teamId = token.teamId as string;
-      }
-      return session;
     },
   },
 });

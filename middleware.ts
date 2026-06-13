@@ -1,43 +1,43 @@
+import NextAuth from "next-auth";
+import { authConfig } from "@/lib/auth.config";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+// Use Auth.js's own middleware wrapper so it validates the JWT and refreshes
+// the session cookie with the correct Max-Age on every request.
+// This is what actually makes the session persistent across browser closes.
+const { auth } = NextAuth(authConfig);
 
-  const sessionToken =
-    request.cookies.get("__Secure-authjs.session-token")?.value ||
-    request.cookies.get("authjs.session-token")?.value ||
-    request.cookies.get("__Secure-next-auth.session-token")?.value ||
-    request.cookies.get("next-auth.session-token")?.value;
+export default auth((req: any) => {
+  const pathname = req.nextUrl.pathname as string;
+  const session = req.auth; // populated by Auth.js after JWT validation
 
   // Unauthenticated → login
   if (pathname.startsWith("/dashboard") || pathname.startsWith("/onboarding")) {
-    if (!sessionToken) {
-      const loginUrl = new URL("/login", request.url);
+    if (!session) {
+      const loginUrl = new URL("/login", req.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
   }
 
   // Authenticated but onboarding not done → /onboarding
-  // All dashboard routes require the astra_onboarded cookie.
   if (pathname.startsWith("/dashboard")) {
-    const onboarded = request.cookies.get("astra_onboarded")?.value;
+    const onboarded = req.cookies.get("astra_onboarded")?.value;
     if (!onboarded) {
-      return NextResponse.redirect(new URL("/onboarding", request.url));
+      return NextResponse.redirect(new URL("/onboarding", req.url));
     }
   }
 
   // Already onboarded → skip /onboarding
   if (pathname === "/onboarding") {
-    const onboarded = request.cookies.get("astra_onboarded")?.value;
+    const onboarded = req.cookies.get("astra_onboarded")?.value;
     if (onboarded) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      return NextResponse.redirect(new URL("/dashboard", req.url));
     }
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: ["/dashboard/:path*", "/onboarding/:path*", "/onboarding"],
