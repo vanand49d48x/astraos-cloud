@@ -106,7 +106,7 @@ export default function AuthenticationDocsPage() {
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-foreground">cURL</h3>
           <CodeBlock
-            code={`curl https://astraos.cloud/api/v1/search \\
+            code={`curl https://www.astraos.cloud/api/v1/search \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
             language="bash"
             filename="terminal"
@@ -123,7 +123,7 @@ headers = {
 }
 
 response = requests.get(
-    "https://astraos.cloud/api/v1/search",
+    "https://www.astraos.cloud/api/v1/search",
     headers=headers,
     params={"bbox": "-122.5,37.5,-122.0,38.0"}
 )`}
@@ -136,7 +136,7 @@ response = requests.get(
           <h3 className="text-sm font-medium text-foreground">JavaScript</h3>
           <CodeBlock
             code={`const response = await fetch(
-  "https://astraos.cloud/api/v1/search?bbox=-122.5,37.5,-122.0,38.0",
+  "https://www.astraos.cloud/api/v1/search?bbox=-122.5,37.5,-122.0,38.0",
   {
     headers: {
       Authorization: "Bearer astra_sk_live_your_key_here",

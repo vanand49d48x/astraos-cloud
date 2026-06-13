@@ -231,7 +231,7 @@ export default function AssetsDocsPage() {
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-foreground">cURL</h3>
           <CodeBlock
-            code={`curl "https://astraos.cloud/api/v1/assets?scene_id=sentinel-2:S2B_MSIL2A_20250115T184929&bands=red,nir&format=cog" \\
+            code={`curl "https://www.astraos.cloud/api/v1/assets?scene_id=sentinel-2:S2B_MSIL2A_20250115T184929&bands=red,nir&format=cog" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
             language="bash"
             filename="terminal"
@@ -244,7 +244,7 @@ export default function AssetsDocsPage() {
             code={`import requests
 
 response = requests.get(
-    "https://astraos.cloud/api/v1/assets",
+    "https://www.astraos.cloud/api/v1/assets",
     params={
         "scene_id": "sentinel-2:S2B_MSIL2A_20250115T184929",
         "bands": "red,nir",
@@ -275,7 +275,7 @@ urllib.request.urlretrieve(red_url, "red_band.tif")`}
   format: "cog",
 });
 
-const res = await fetch(\`https://astraos.cloud/api/v1/assets?\${params}\`, {
+const res = await fetch(\`https://www.astraos.cloud/api/v1/assets?\${params}\`, {
   headers: { Authorization: "Bearer astra_sk_live_your_key_here" },
 });
 

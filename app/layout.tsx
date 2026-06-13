@@ -24,12 +24,12 @@ export const metadata: Metadata = {
   },
   description:
     "ASTRA OS unifies satellite imagery from multiple providers into a single, developer-friendly API. One search, one format, one invoice.",
-  metadataBase: new URL("https://astraos.cloud"),
+  metadataBase: new URL("https://www.astraos.cloud"),
   openGraph: {
     title: "ASTRA OS — The Operating System for Earth Observation Data",
     description:
       "Unify satellite imagery from Sentinel, Landsat, and more into a single API. COG output, STAC metadata, and processing primitives.",
-    url: "https://astraos.cloud",
+    url: "https://www.astraos.cloud",
     siteName: "ASTRA OS",
     locale: "en_US",
     type: "website",

@@ -24,7 +24,7 @@ const layers = [
       "One API key, one set of docs, one integration",
     ],
     code: `# Search across all providers at once
-curl "https://astraos.cloud/api/v1/search?\\
+curl "https://www.astraos.cloud/api/v1/search?\\
   bbox=-122.5,37.5,-122.0,38.0&\\
   datetime=2025-01-01/2025-02-01&\\
   cloud_cover_lt=20&\\

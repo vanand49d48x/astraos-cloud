@@ -124,7 +124,7 @@ Most geospatial libraries support COG access transparently. With GDAL or rasteri
 \`\`\`python
 import rasterio
 
-url = "https://astraos.cloud/api/v1/assets/scene-id/B04?format=cog"
+url = "https://www.astraos.cloud/api/v1/assets/scene-id/B04?format=cog"
 with rasterio.open(url) as src:
     # Read a window — only fetches the tiles that intersect
     window = rasterio.windows.from_bounds(

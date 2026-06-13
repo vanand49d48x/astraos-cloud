@@ -96,7 +96,7 @@ export default function ExplorerPage() {
   }
 
   function copySnippet() {
-    const snippet = `curl "https://astraos.cloud/api/v1/search?bbox=${bbox}&datetime=${dateRange}&cloud_cover_lt=${cloudCover}&limit=20" \\
+    const snippet = `curl "https://www.astraos.cloud/api/v1/search?bbox=${bbox}&datetime=${dateRange}&cloud_cover_lt=${cloudCover}&limit=20" \\
   -H "Authorization: Bearer astra_YOUR_KEY"`;
     navigator.clipboard.writeText(snippet);
     setCopied(true);

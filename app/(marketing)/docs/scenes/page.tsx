@@ -120,7 +120,7 @@ export default function ScenesDocsPage() {
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-foreground">cURL</h3>
           <CodeBlock
-            code={`curl "https://astraos.cloud/api/v1/scenes/sentinel-2:S2B_MSIL2A_20250115T184929" \\
+            code={`curl "https://www.astraos.cloud/api/v1/scenes/sentinel-2:S2B_MSIL2A_20250115T184929" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
             language="bash"
             filename="terminal"
@@ -134,7 +134,7 @@ export default function ScenesDocsPage() {
 
 scene_id = "sentinel-2:S2B_MSIL2A_20250115T184929"
 response = requests.get(
-    f"https://astraos.cloud/api/v1/scenes/{scene_id}",
+    f"https://www.astraos.cloud/api/v1/scenes/{scene_id}",
     headers={"Authorization": "Bearer astra_sk_live_your_key_here"},
 )
 
@@ -153,7 +153,7 @@ print(f"Available bands: {list(scene['assets'].keys())}")`}
             code={`const sceneId = "sentinel-2:S2B_MSIL2A_20250115T184929";
 
 const res = await fetch(
-  \`https://astraos.cloud/api/v1/scenes/\${sceneId}\`,
+  \`https://www.astraos.cloud/api/v1/scenes/\${sceneId}\`,
   {
     headers: { Authorization: "Bearer astra_sk_live_your_key_here" },
   }
@@ -246,9 +246,9 @@ console.log("Available bands:", Object.keys(scene.assets));`}
     }
   },
   "links": [
-    { "rel": "self", "href": "https://astraos.cloud/api/v1/scenes/sentinel-2:S2B_MSIL2A_20250115T184929" },
-    { "rel": "parent", "href": "https://astraos.cloud/api/v1/search" },
-    { "rel": "root", "href": "https://astraos.cloud/api/v1" }
+    { "rel": "self", "href": "https://www.astraos.cloud/api/v1/scenes/sentinel-2:S2B_MSIL2A_20250115T184929" },
+    { "rel": "parent", "href": "https://www.astraos.cloud/api/v1/search" },
+    { "rel": "root", "href": "https://www.astraos.cloud/api/v1" }
   ]
 }`}
           language="json"

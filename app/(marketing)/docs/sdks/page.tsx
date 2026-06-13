@@ -96,7 +96,7 @@ export default function SDKsDocsPage() {
             code={`import requests
 
 API_KEY = "astra_sk_live_your_key_here"
-BASE = "https://astraos.cloud/api/v1"
+BASE = "https://www.astraos.cloud/api/v1"
 headers = {"Authorization": f"Bearer {API_KEY}"}
 
 # Search for Sentinel-2 scenes over San Francisco
@@ -135,7 +135,7 @@ for scene in data["features"]:
             code={`import requests
 
 API_KEY = "astra_sk_live_your_key_here"
-BASE = "https://astraos.cloud/api/v1"
+BASE = "https://www.astraos.cloud/api/v1"
 headers = {"Authorization": f"Bearer {API_KEY}"}
 
 scene_id = "sentinel-2:S2B_MSIL2A_20250115T184929"
@@ -176,7 +176,7 @@ for band_name, asset in assets["assets"].items():
 import time
 
 API_KEY = "astra_sk_live_your_key_here"
-BASE = "https://astraos.cloud/api/v1"
+BASE = "https://www.astraos.cloud/api/v1"
 headers = {"Authorization": f"Bearer {API_KEY}"}
 
 # Submit NDVI job
@@ -224,7 +224,7 @@ else:
           </h3>
           <CodeBlock
             code={`const API_KEY = "astra_sk_live_your_key_here";
-const BASE = "https://astraos.cloud/api/v1";
+const BASE = "https://www.astraos.cloud/api/v1";
 const headers = { Authorization: \`Bearer \${API_KEY}\` };
 
 // Search for Sentinel-2 scenes over San Francisco
@@ -257,7 +257,7 @@ data.features.forEach((scene) => {
           </h3>
           <CodeBlock
             code={`const API_KEY = "astra_sk_live_your_key_here";
-const BASE = "https://astraos.cloud/api/v1";
+const BASE = "https://www.astraos.cloud/api/v1";
 const headers = { Authorization: \`Bearer \${API_KEY}\` };
 
 const sceneId = "sentinel-2:S2B_MSIL2A_20250115T184929";
@@ -293,7 +293,7 @@ Object.entries(assets.assets).forEach(([band, asset]) => {
           </h3>
           <CodeBlock
             code={`const API_KEY = "astra_sk_live_your_key_here";
-const BASE = "https://astraos.cloud/api/v1";
+const BASE = "https://www.astraos.cloud/api/v1";
 const headers = { Authorization: \`Bearer \${API_KEY}\` };
 
 // Submit NDVI job
@@ -349,7 +349,7 @@ if (job.status === "completed") {
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-foreground">Search</h3>
           <CodeBlock
-            code={`curl "https://astraos.cloud/api/v1/search?bbox=-122.5,37.5,-122.0,38.0&datetime=2025-01-01/2025-02-01&limit=5" \\
+            code={`curl "https://www.astraos.cloud/api/v1/search?bbox=-122.5,37.5,-122.0,38.0&datetime=2025-01-01/2025-02-01&limit=5" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
             language="bash"
             filename="terminal"
@@ -361,7 +361,7 @@ if (job.status === "completed") {
             Scene Details
           </h3>
           <CodeBlock
-            code={`curl "https://astraos.cloud/api/v1/scenes/sentinel-2:S2B_MSIL2A_20250115T184929" \\
+            code={`curl "https://www.astraos.cloud/api/v1/scenes/sentinel-2:S2B_MSIL2A_20250115T184929" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
             language="bash"
             filename="terminal"
@@ -373,7 +373,7 @@ if (job.status === "completed") {
             Resolve Assets
           </h3>
           <CodeBlock
-            code={`curl "https://astraos.cloud/api/v1/assets?scene_id=sentinel-2:S2B_MSIL2A_20250115T184929&bands=red,nir&format=cog" \\
+            code={`curl "https://www.astraos.cloud/api/v1/assets?scene_id=sentinel-2:S2B_MSIL2A_20250115T184929&bands=red,nir&format=cog" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
             language="bash"
             filename="terminal"
@@ -385,7 +385,7 @@ if (job.status === "completed") {
             Submit Processing Job
           </h3>
           <CodeBlock
-            code={`curl -X POST "https://astraos.cloud/api/v1/process" \\
+            code={`curl -X POST "https://www.astraos.cloud/api/v1/process" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here" \\
   -H "Content-Type: application/json" \\
   -d '{"operation": "ndvi", "scene_ids": ["sentinel-2:S2B_MSIL2A_20250115T184929"]}'`}
@@ -399,7 +399,7 @@ if (job.status === "completed") {
             Poll Job Status
           </h3>
           <CodeBlock
-            code={`curl "https://astraos.cloud/api/v1/process/job_abc123" \\
+            code={`curl "https://www.astraos.cloud/api/v1/process/job_abc123" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
             language="bash"
             filename="terminal"

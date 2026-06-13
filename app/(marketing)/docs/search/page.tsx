@@ -183,7 +183,7 @@ export default function SearchDocsPage() {
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-foreground">cURL</h3>
           <CodeBlock
-            code={`curl "https://astraos.cloud/api/v1/search?bbox=-122.5,37.5,-122.0,38.0&datetime=2025-01-01/2025-02-01&collections=sentinel-2-l2a&cloud_cover_lt=15&limit=3" \\
+            code={`curl "https://www.astraos.cloud/api/v1/search?bbox=-122.5,37.5,-122.0,38.0&datetime=2025-01-01/2025-02-01&collections=sentinel-2-l2a&cloud_cover_lt=15&limit=3" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"`}
             language="bash"
             filename="terminal"
@@ -196,7 +196,7 @@ export default function SearchDocsPage() {
             code={`import requests
 
 response = requests.get(
-    "https://astraos.cloud/api/v1/search",
+    "https://www.astraos.cloud/api/v1/search",
     params={
         "bbox": "-122.5,37.5,-122.0,38.0",
         "datetime": "2025-01-01/2025-02-01",
@@ -227,7 +227,7 @@ for scene in data["features"]:
   limit: "3",
 });
 
-const res = await fetch(\`https://astraos.cloud/api/v1/search?\${params}\`, {
+const res = await fetch(\`https://www.astraos.cloud/api/v1/search?\${params}\`, {
   headers: { Authorization: "Bearer astra_sk_live_your_key_here" },
 });
 
@@ -286,7 +286,7 @@ data.features.forEach((scene) => {
         "visual": { "href": "https://...", "type": "image/tiff; application=geotiff; profile=cloud-optimized" }
       },
       "links": [
-        { "rel": "self", "href": "https://astraos.cloud/api/v1/scenes/sentinel-2:S2B_MSIL2A_20250115T184929" }
+        { "rel": "self", "href": "https://www.astraos.cloud/api/v1/scenes/sentinel-2:S2B_MSIL2A_20250115T184929" }
       ]
     }
   ],

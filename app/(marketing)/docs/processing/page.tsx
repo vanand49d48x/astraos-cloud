@@ -357,7 +357,7 @@ export default function ProcessingDocsPage() {
           <h3 className="text-sm font-medium text-foreground">cURL</h3>
           <CodeBlock
             code={`# Step 1: Submit the job
-curl -X POST "https://astraos.cloud/api/v1/process" \\
+curl -X POST "https://www.astraos.cloud/api/v1/process" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -369,7 +369,7 @@ curl -X POST "https://astraos.cloud/api/v1/process" \\
 # Response: { "job_id": "job_abc123", "status": "queued", ... }
 
 # Step 2: Poll for status
-curl "https://astraos.cloud/api/v1/process/job_abc123" \\
+curl "https://www.astraos.cloud/api/v1/process/job_abc123" \\
   -H "Authorization: Bearer astra_sk_live_your_key_here"
 
 # Response when complete:
@@ -386,7 +386,7 @@ curl "https://astraos.cloud/api/v1/process/job_abc123" \\
 import time
 
 API_KEY = "astra_sk_live_your_key_here"
-BASE = "https://astraos.cloud/api/v1"
+BASE = "https://www.astraos.cloud/api/v1"
 headers = {"Authorization": f"Bearer {API_KEY}"}
 
 # Step 1: Submit the job
@@ -429,7 +429,7 @@ else:
           <h3 className="text-sm font-medium text-foreground">JavaScript</h3>
           <CodeBlock
             code={`const API_KEY = "astra_sk_live_your_key_here";
-const BASE = "https://astraos.cloud/api/v1";
+const BASE = "https://www.astraos.cloud/api/v1";
 const headers = { Authorization: \`Bearer \${API_KEY}\` };
 
 // Step 1: Submit the job

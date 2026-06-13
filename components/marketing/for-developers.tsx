@@ -60,7 +60,7 @@ const assets = await astra.assets.list({
     lang: "bash",
     filename: "terminal",
     code: `# Search all providers — one request
-curl "https://astraos.cloud/api/v1/search?\\
+curl "https://www.astraos.cloud/api/v1/search?\\
   bbox=-122.5,37.7,-122.3,37.9&\\
   datetime=2025-01-01/2026-01-01&\\
   cloud_cover_lt=20" \\

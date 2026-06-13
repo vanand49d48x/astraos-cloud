@@ -40,7 +40,7 @@ const assets = await astra.getAssets(features[0].id, {
 });`;
 
 const curlCode = `# Search for satellite imagery
-curl "https://astraos.cloud/api/v1/search?\\
+curl "https://www.astraos.cloud/api/v1/search?\\
   bbox=-122.5,37.5,-122.0,38.0&\\
   datetime=2025-01-01/2025-02-01&\\
   cloud_cover_lt=20&\\
@@ -48,12 +48,12 @@ curl "https://astraos.cloud/api/v1/search?\\
   -H "Authorization: Bearer astra_your_key"
 
 # Get scene details
-curl "https://astraos.cloud/api/v1/scenes/\\
+curl "https://www.astraos.cloud/api/v1/scenes/\\
   sentinel-2-l2a:S2A_MSIL2A_20250115T..." \\
   -H "Authorization: Bearer astra_your_key"
 
 # Resolve asset URLs (COG)
-curl "https://astraos.cloud/api/v1/assets?\\
+curl "https://www.astraos.cloud/api/v1/assets?\\
   scene_id=sentinel-2-l2a:S2A_...&\\
   bands=red,green,blue,nir" \\
   -H "Authorization: Bearer astra_your_key"`;

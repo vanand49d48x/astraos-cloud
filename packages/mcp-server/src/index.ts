@@ -147,7 +147,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       content: [
         {
           type: "text",
-          text: "Error: ASTRA_API_KEY environment variable is not set. Set it with your API key from https://astraos.cloud/dashboard/api-keys",
+          text: "Error: ASTRA_API_KEY environment variable is not set. Set it with your API key from https://www.astraos.cloud/dashboard/api-keys",
         },
       ],
     };

@@ -287,7 +287,7 @@ export function Hero() {
               <span className="text-muted-foreground/50"># Search all providers in one call</span>
               {"\n"}
               <span className="text-blue-400">curl</span>
-              <span className="text-foreground/80">{` "https://astraos.cloud/api/v1/search?`}</span>
+              <span className="text-foreground/80">{` "https://www.astraos.cloud/api/v1/search?`}</span>
               {"\n"}
               <span className="text-foreground/80">{`  bbox=-122.5,37.7,-122.3,37.9&`}</span>
               {"\n"}

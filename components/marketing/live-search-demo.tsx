@@ -180,14 +180,14 @@ export function LiveSearchDemo() {
 
     switch (lang) {
       case "curl":
-        return `curl "https://astraos.cloud/api/v1/search?bbox=${p.bbox}&datetime=${p.datetime}&cloud_cover_lt=${p.cloud_cover_lt}&limit=${p.limit}" \\
+        return `curl "https://www.astraos.cloud/api/v1/search?bbox=${p.bbox}&datetime=${p.datetime}&cloud_cover_lt=${p.cloud_cover_lt}&limit=${p.limit}" \\
   -H "Authorization: Bearer astra_YOUR_API_KEY"`;
 
       case "python":
         return `import requests
 
 response = requests.get(
-    "https://astraos.cloud/api/v1/search",
+    "https://www.astraos.cloud/api/v1/search",
     params={
         "bbox": "${p.bbox}",
         "datetime": "${p.datetime}",
@@ -210,7 +210,7 @@ for scene in scenes["features"]:
 });
 
 const res = await fetch(
-  \`https://astraos.cloud/api/v1/search?\${params}\`,
+  \`https://www.astraos.cloud/api/v1/search?\${params}\`,
   { headers: { Authorization: "Bearer astra_YOUR_API_KEY" } }
 );
 
@@ -856,11 +856,11 @@ function SceneDetail({ item, onClose }: { item: STACItem; onClose: () => void })
   function getSceneCodeSnippet(lang: CodeLang): string {
     switch (lang) {
       case "curl":
-        return `curl "https://astraos.cloud/api/v1/scenes/${item.id}" \\
+        return `curl "https://www.astraos.cloud/api/v1/scenes/${item.id}" \\
   -H "Authorization: Bearer astra_YOUR_API_KEY"
 
 # Get specific band as COG
-curl "https://astraos.cloud/api/v1/assets?scene_id=${item.id}&bands=red,green,blue&format=cog" \\
+curl "https://www.astraos.cloud/api/v1/assets?scene_id=${item.id}&bands=red,green,blue&format=cog" \\
   -H "Authorization: Bearer astra_YOUR_API_KEY"`;
 
       case "python":
@@ -868,13 +868,13 @@ curl "https://astraos.cloud/api/v1/assets?scene_id=${item.id}&bands=red,green,bl
 
 # Fetch scene metadata
 scene = requests.get(
-    "https://astraos.cloud/api/v1/scenes/${item.id}",
+    "https://www.astraos.cloud/api/v1/scenes/${item.id}",
     headers={"Authorization": "Bearer astra_YOUR_API_KEY"},
 ).json()
 
 # Get COG URLs for RGB bands
 assets = requests.get(
-    "https://astraos.cloud/api/v1/assets",
+    "https://www.astraos.cloud/api/v1/assets",
     params={"scene_id": "${item.id}", "bands": "red,green,blue", "format": "cog"},
     headers={"Authorization": "Bearer astra_YOUR_API_KEY"},
 ).json()
@@ -885,13 +885,13 @@ for asset in assets["assets"]:
       case "javascript":
         return `// Fetch scene metadata
 const scene = await fetch(
-  "https://astraos.cloud/api/v1/scenes/${item.id}",
+  "https://www.astraos.cloud/api/v1/scenes/${item.id}",
   { headers: { Authorization: "Bearer astra_YOUR_API_KEY" } }
 ).then(r => r.json());
 
 // Get COG URLs for RGB bands
 const assets = await fetch(
-  \`https://astraos.cloud/api/v1/assets?scene_id=${item.id}&bands=red,green,blue&format=cog\`,
+  \`https://www.astraos.cloud/api/v1/assets?scene_id=${item.id}&bands=red,green,blue&format=cog\`,
   { headers: { Authorization: "Bearer astra_YOUR_API_KEY" } }
 ).then(r => r.json());
 
