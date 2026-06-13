@@ -14,6 +14,8 @@ import {
   Check,
   Loader2,
   X,
+  FlaskConical,
+  TrendingUp,
 } from "lucide-react";
 import { PRESET_LOCATIONS } from "@/lib/constants";
 
@@ -66,6 +68,9 @@ export default function ExplorerPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<Record<string, unknown> | null>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   const handleSearch = useCallback(async () => {
     setLoading(true);
@@ -98,6 +103,27 @@ export default function ExplorerPage() {
       setLoading(false);
     }
   }, [bbox, dateRange, cloudCover, collections]);
+
+  const handleAnalyze = useCallback(async () => {
+    if (!selectedScene) return;
+    setAnalyzing(true);
+    setAnalysisResult(null);
+    setAnalysisError(null);
+    try {
+      const res = await fetch("/api/v1/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scene_id: selectedScene.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) setAnalysisError(data.error ?? "Analysis failed");
+      else setAnalysisResult(data);
+    } catch {
+      setAnalysisError("Request failed");
+    } finally {
+      setAnalyzing(false);
+    }
+  }, [selectedScene]);
 
   function applyPreset(preset: (typeof PRESET_LOCATIONS)[number]) {
     setBbox(preset.bbox.join(","));
@@ -222,12 +248,12 @@ export default function ExplorerPage() {
                 {results.features.map((scene) => (
                   <button
                     key={scene.id}
-                    onClick={() => setSelectedScene(scene)}
                     className={`w-full text-left p-3 rounded-lg border transition-all ${
                       selectedScene?.id === scene.id
                         ? "border-primary/50 bg-primary/10"
                         : "border-white/[0.06] hover:border-white/10 hover:bg-white/[0.02]"
                     }`}
+                    onClick={() => { setSelectedScene(scene); setAnalysisResult(null); setAnalysisError(null); }}
                   >
                     <div className="flex items-start gap-2.5">
                       {/* Thumbnail */}
@@ -374,6 +400,67 @@ export default function ExplorerPage() {
                   <p className="text-xs font-mono mt-1">
                     [{selectedScene.bbox.map((b) => b.toFixed(4)).join(", ")}]
                   </p>
+                </div>
+              )}
+
+              {/* Spectral analysis */}
+              {selectedScene.id.startsWith("planetary-computer:") && (
+                <div className="mt-4 pt-4 border-t border-white/[0.06]">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-sm font-semibold flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-primary" />
+                      Spectral Analysis
+                    </h4>
+                    {!analysisResult && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleAnalyze}
+                        loading={analyzing}
+                        className="text-xs"
+                      >
+                        <FlaskConical className="w-3.5 h-3.5 mr-1.5" />
+                        Analyze
+                      </Button>
+                    )}
+                  </div>
+
+                  {analysisError && (
+                    <p className="text-xs text-destructive">{analysisError}</p>
+                  )}
+
+                  {analyzing && (
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Computing spectral indices…
+                    </div>
+                  )}
+
+                  {analysisResult && (
+                    <div className="space-y-2">
+                      {Object.entries(
+                        (analysisResult as { indices: Record<string, { value: number; interpretation: string; description: string }> }).indices
+                      ).map(([name, idx]) => (
+                        <div key={name} className="flex items-center gap-3">
+                          <span className="text-xs font-mono uppercase text-muted-foreground w-10 shrink-0">{name}</span>
+                          <div className="flex-1 bg-white/5 rounded-full h-2 overflow-hidden">
+                            <div
+                              className="h-2 rounded-full bg-primary/70"
+                              style={{ width: `${Math.max(0, Math.min(100, ((idx.value + 1) / 2) * 100))}%` }}
+                            />
+                          </div>
+                          <span className="text-xs font-mono w-12 text-right">{idx.value.toFixed(3)}</span>
+                          <span className="text-[10px] text-muted-foreground max-w-[140px] truncate">{idx.interpretation}</span>
+                        </div>
+                      ))}
+                      <button
+                        className="text-[10px] text-muted-foreground hover:text-foreground mt-1"
+                        onClick={() => { setAnalysisResult(null); setAnalysisError(null); }}
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
