@@ -9,95 +9,112 @@ import { Check, Copy, Terminal, Code2, ArrowRight } from "lucide-react";
 
 const TABS = [
   {
-    label: "Python",
-    lang: "python",
-    filename: "search.py",
-    code: `import astra
-
-client = astra.create_client("astra_sk_live_...")
-
-# Search all providers in one call
-results = client.search(
-    bbox=(-122.5, 37.7, -122.3, 37.9),
-    datetime="2025-01-01/2026-01-01",
-    cloud_cover_lt=20,
-)
-
-print(f"Found {len(results.features)} scenes")
-# → Found 12 scenes
-
-# Run NDVI analysis
-job = client.submit_job("ndvi", results.features[0].id)
-done = client.poll_job(job.job_id)
-print(done.result_url)  # → COG ready`,
-  },
-  {
-    label: "JavaScript",
-    lang: "javascript",
-    filename: "search.ts",
-    code: `import { createClient } from '@astra/sdk';
-
-const astra = createClient({ apiKey: 'astra_sk_live_...' });
-
-// Search all providers in one call
-const results = await astra.search({
-  bbox: [-122.5, 37.7, -122.3, 37.9],
-  datetime: '2025-01-01/2026-01-01',
-  cloudCoverLt: 20,
-});
-
-console.log(\`Found \${results.features.length} scenes\`);
-// → Found 12 scenes
-
-// Get COG asset URLs
-const assets = await astra.assets.list({
-  sceneId: results.features[0].id,
-  bands: ['red', 'nir'],
-});`,
-  },
-  {
-    label: "cURL",
+    label: "Search",
     lang: "bash",
-    filename: "terminal",
-    code: `# Search all providers — one request
+    filename: "search.sh",
+    code: `# Search 6 satellite providers in one call
 curl "https://www.astraos.cloud/api/v1/search?\\
   bbox=-122.5,37.7,-122.3,37.9&\\
   datetime=2025-01-01/2026-01-01&\\
   cloud_cover_lt=20" \\
   -H "Authorization: Bearer astra_sk_live_..."
 
-# Response (STAC FeatureCollection)
+# STAC FeatureCollection
 {
-  "type": "FeatureCollection",
-  "features": [...],
-  "context": {
-    "returned": 12,
-    "matched": 47
+  "features": [...],  // Sentinel + Planet + Airbus
+  "context": { "returned": 18, "matched": 94 }
+}`,
+  },
+  {
+    label: "Analyze",
+    lang: "bash",
+    filename: "analyze.sh",
+    code: `# AI-powered spectral analysis
+curl -X POST "https://www.astraos.cloud/api/v1/analyze" \\
+  -H "Authorization: Bearer astra_sk_live_..." \\
+  -d '{"bbox":[-62.5,-10.5,-60.5,-8.5],
+       "indices":["ndvi","nbr","ndwi"]}'
+
+# Response includes AI classification
+{
+  "indices": {
+    "ndvi": { "value": 0.72 },
+    "nbr":  { "value": 0.61 }
+  },
+  "classification": {
+    "primaryUseCase": "vegetation",
+    "landCover": "Dense Forest"
   }
+}`,
+  },
+  {
+    label: "Time Series",
+    lang: "bash",
+    filename: "timeseries.sh",
+    code: `# Monthly trend + anomaly detection
+curl -X POST "https://www.astraos.cloud/api/v1/timeseries" \\
+  -H "Authorization: Bearer astra_sk_live_..." \\
+  -d '{"bbox":[-62.5,-10.5,-60.5,-8.5],
+       "start_date":"2024-01-01",
+       "end_date":"2026-01-01",
+       "indices":["ndvi","nbr"],
+       "interval":"monthly"}'
+
+# Trends + anomalies + phenology
+{
+  "trends": {
+    "ndvi": { "direction": "decreasing",
+      "changePer30Days": -0.008, "rSquared": 0.82 }
+  },
+  "anomalies": [{ "date":"2025-03","zScore":-2.1 }]
+}`,
+  },
+  {
+    label: "Monitor",
+    lang: "bash",
+    filename: "monitor.sh",
+    code: `# Set up automated daily monitoring
+curl -X POST "https://www.astraos.cloud/api/monitors" \\
+  -H "Authorization: Bearer astra_sk_live_..." \\
+  -d '{"name":"Amazon Watch",
+       "watchFor":"deforestation or fire",
+       "aoiBbox":"-62.5,-10.5,-60.5,-8.5",
+       "indices":["ndvi","nbr"]}'
+
+# ASTRA runs daily change detection
+# Claude AI generates significance reports:
+{
+  "significance": "high",
+  "summary": "8.3% NDVI decline. NBR increase
+    indicates fire activity in NW sector."
 }`,
   },
 ];
 
 const FEATURES = [
   { icon: "⚡", text: "Results in ~400ms" },
-  { icon: "📦", text: "Zero format conversion" },
-  { icon: "🔑", text: "One API key, all providers" },
-  { icon: "📐", text: "STAC + COG standard output" },
+  { icon: "🛰️", text: "6 providers, one key" },
+  { icon: "🤖", text: "Claude AI analysis" },
+  { icon: "📈", text: "Time series + phenology" },
+  { icon: "🔔", text: "Automated monitoring" },
+  { icon: "📐", text: "STAC + COG output" },
 ];
 
 const STAC_OUTPUT = `{
-  "id": "sentinel-2-l2a:S2B_20250114...",
-  "properties": {
-    "datetime": "2025-01-14T18:49:39Z",
-    "eo:cloud_cover": 4.2,
-    "astra:provider": "sentinel-2-l2a",
-    "platform": "sentinel-2b",
-    "gsd": 10
+  "indices": {
+    "ndvi": { "value": 0.72, "interpretation":
+              "Dense vegetation" },
+    "nbr":  { "value": 0.61 },
+    "ndwi": { "value": -0.18 }
   },
-  "assets": {
-    "red":  { "href": "...", "astra:is_cog": true },
-    "nir":  { "href": "...", "astra:is_cog": true }
-  }
+  "classification": {
+    "primaryUseCase": "vegetation",
+    "landCover": "Dense Forest",
+    "burnRisk": "Low",
+    "floodRisk": "Low"
+  },
+  "sceneId": "planetary-computer:sentinel...",
+  "cloudCover": 4.2
 }`;
 
 // Line-by-line highlight colors
@@ -173,7 +190,7 @@ export function ForDevelopers() {
         >
           <Badge variant="primary" className="mb-4">For Developers</Badge>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Integrate in{" "}
+            Four endpoints.{" "}
             <motion.span
               className="text-primary"
               initial={{ opacity: 0 }}
@@ -181,12 +198,12 @@ export function ForDevelopers() {
               viewport={{ once: true }}
               transition={{ delay: 0.4 }}
             >
-              5 lines of code
+              Full earth intelligence.
             </motion.span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            Official SDKs for Python and JavaScript. REST API for everything else.
-            Same response shape regardless of which satellite the data came from.
+            Search, analyze, time-series, and monitor — each endpoint does exactly one thing well.
+            REST API with GraphQL support. Same response shape regardless of which satellite the data came from.
           </p>
         </motion.div>
 
@@ -230,7 +247,7 @@ export function ForDevelopers() {
                   transition={{ duration: 2, repeat: Infinity }}
                 />
                 <Terminal className="w-3.5 h-3.5 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">STAC Item — standardized output</span>
+                <span className="text-xs text-muted-foreground">Analysis response — /api/v1/analyze</span>
               </div>
               <pre className="p-4 text-[11px] font-mono text-foreground/70 leading-relaxed overflow-x-auto">
                 {STAC_OUTPUT}

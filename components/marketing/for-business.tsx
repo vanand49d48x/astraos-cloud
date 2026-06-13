@@ -20,7 +20,7 @@ const USE_CASES = [
       { icon: DollarSign, label: "Irrigation waste reduced", before: null, after: "23%", highlight: false },
     ],
     description:
-      "Agronomists at scale use ASTRA OS to monitor crop health, detect early stress signals, and file NDVI-backed reports without touching a single satellite API directly.",
+      "Agronomists use ASTRA OS to track NDVI time series, detect VCI-based drought stress, compute phenology metrics (green-up, peak, senescence), and file AI-backed reports — without touching a single satellite API directly.",
     imgUrl:
       "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&CRS=EPSG:4326&BBOX=41,-96,44,-90&WIDTH=700&HEIGHT=400&FORMAT=image/jpeg",
     imgAlt: "Satellite view of croplands — MODIS Terra",
@@ -28,20 +28,20 @@ const USE_CASES = [
     accent: "from-green-500/20 to-emerald-600/5",
     border: "border-green-500/20",
     badge: "bg-green-500/10 text-green-400 border-green-500/20",
-    steps: ["Define AOI", "Pull NDVI history", "Detect anomalies", "Alert field team"],
+    steps: ["Define AOI", "Pull NDVI time series", "VCI drought alert", "AI field report"],
   },
   {
     id: "insurance",
     label: "Insurance & Risk",
     headline: "73% faster claims",
-    subline: "verified with before/after imagery — no field visit needed",
+    subline: "verified with AI change detection — no field visit needed",
     metrics: [
       { icon: Clock, label: "Claim verification time", before: "14 days", after: "4 hours", highlight: true },
       { icon: TrendingUp, label: "Fraud detection rate", before: "12%", after: "41%", highlight: false },
       { icon: DollarSign, label: "Assessor costs saved", before: null, after: "$2.1M/yr", highlight: false },
     ],
     description:
-      "P&C insurers use before/after satellite imagery to verify property damage instantly. ASTRA OS delivers change detection results in hours instead of dispatching adjusters.",
+      "P&C insurers run AI-powered before/after change detection — dNBR burn severity, dNDWI flood mapping, land cover classification — to verify property damage in hours instead of dispatching adjusters.",
     imgUrl:
       "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&CRS=EPSG:4326&BBOX=29,-92,32,-88&WIDTH=700&HEIGHT=400&FORMAT=image/jpeg",
     imgAlt: "Satellite view of Gulf Coast — MODIS Terra",
@@ -49,28 +49,28 @@ const USE_CASES = [
     accent: "from-blue-500/20 to-cyan-600/5",
     border: "border-blue-500/20",
     badge: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-    steps: ["File claim", "Pull pre/post imagery", "Run change detection", "Auto-approve or flag"],
+    steps: ["File claim", "Pull pre/post imagery", "AI change detection", "Auto-approve or flag"],
   },
   {
-    id: "realestate",
-    label: "Real Estate",
-    headline: "3× faster due diligence",
-    subline: "on land use, zoning, and environmental risk",
+    id: "environment",
+    label: "Environmental",
+    headline: "Real-time deforestation alerts",
+    subline: "burn severity + flood mapping across any AOI",
     metrics: [
-      { icon: Clock, label: "Site analysis time", before: "3 weeks", after: "2 days", highlight: true },
-      { icon: TrendingUp, label: "Environmental risk", before: "Manual review", after: "Automated", highlight: false },
-      { icon: DollarSign, label: "Report cost per site", before: "$8,000", after: "$400", highlight: false },
+      { icon: Clock, label: "Alert latency", before: "Weeks", after: "Next day", highlight: true },
+      { icon: TrendingUp, label: "Area monitored", before: "Manual sampling", after: "Full AOI", highlight: false },
+      { icon: DollarSign, label: "Monitoring cost", before: "$50K/yr", after: "$800/yr", highlight: false },
     ],
     description:
-      "Real estate firms run land classification, flood risk, and change detection on acquisition targets before committing to site visits.",
+      "NGOs and climate teams use ASTRA monitors to watch for deforestation (NDVI decline), wildfires (dNBR severity), and flooding (dNDWI) across large areas. Claude AI generates daily significance reports with actionable recommendations.",
     imgUrl:
-      "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&CRS=EPSG:4326&BBOX=33,-113,34,-111&WIDTH=700&HEIGHT=400&FORMAT=image/jpeg",
-    imgAlt: "Satellite view of Phoenix urban area — MODIS Terra",
-    tag: "Land intelligence",
+      "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&CRS=EPSG:4326&BBOX=-63,-11,-59,-7&WIDTH=700&HEIGHT=400&FORMAT=image/jpeg",
+    imgAlt: "Satellite view of Amazon rainforest — MODIS Terra",
+    tag: "Change detection",
     accent: "from-orange-500/20 to-amber-600/5",
     border: "border-orange-500/20",
     badge: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-    steps: ["Select target parcel", "Run land classification", "Score environmental risk", "Decide in hours"],
+    steps: ["Set up monitor", "Daily scene comparison", "AI significance rating", "Webhook alert"],
   },
 ];
 
@@ -152,18 +152,18 @@ export function ForBusiness() {
         >
           <Badge variant="secondary" className="mb-4">For Business</Badge>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Turn satellite data into{" "}
+            AI insights that drive{" "}
             <motion.span
               className="text-primary"
               initial={{ opacity: 0 }}
               animate={isInView ? { opacity: 1 } : {}}
               transition={{ delay: 0.3 }}
             >
-              business outcomes
+              real decisions
             </motion.span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            No geospatial expertise required. Your team gets answers, not data engineering work.
+            No geospatial expertise required. Spectral indices, change detection, and Claude AI analysis — your team gets answers, not a data pipeline.
           </p>
         </motion.div>
 

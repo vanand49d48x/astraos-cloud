@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Zap, Download } from "lucide-react";
+import { MapPin, Brain, Bell } from "lucide-react";
 
 const STEPS = [
   {
@@ -11,32 +11,32 @@ const STEPS = [
     color: "text-blue-400",
     bg: "bg-blue-500/10",
     border: "border-blue-500/20",
-    title: "Define your area",
+    title: "Define your area of interest",
     description:
-      "Pass a bounding box (any corner of Earth) and a date range. That's all the input ASTRA needs.",
-    code: `bbox=[-122.5, 37.7, -122.3, 37.9]\ndatetime="2025-01-01/2026-01-01"`,
+      "Pass a bounding box and a date range. ASTRA fans out to 6 providers — Sentinel-2, Landsat, Planet Labs, UP42, Airbus, and Planetary Computer — in a single request.",
+    code: `# One search, 6 providers\nPOST /api/v1/search\n{\n  "bbox": [-122.5, 37.7, -122.3, 37.9],\n  "datetime": "2025-01-01/2026-01-01",\n  "cloud_cover_lt": 20\n}`,
   },
   {
     number: "02",
-    icon: Zap,
+    icon: Brain,
     color: "text-primary",
     bg: "bg-primary/10",
     border: "border-primary/20",
-    title: "We query all providers simultaneously",
+    title: "Run AI-powered analysis",
     description:
-      "ASTRA fans out to Sentinel-2, Landsat 8/9, and Planetary Computer in parallel. You don't write a single line of provider-specific code.",
-    code: `→ Sentinel-2  (10m, 5-day revisit)\n→ Landsat 9   (30m, 8-day revisit)\n→ Planetary   (multi-source)`,
+      "Compute spectral indices (NDVI, NBR, NDWI), detect burn severity, flood changes, and vegetation stress. Claude AI generates natural-language reports and significance ratings.",
+    code: `# Analyze any scene\nPOST /api/v1/analyze\n→ NDVI: 0.72  (Dense vegetation)\n→ NBR:  0.61  (Low burn risk)\n→ NDWI: -0.18 (No flood signal)\n→ AI: "Stable canopy, no anomalies"`,
   },
   {
     number: "03",
-    icon: Download,
+    icon: Bell,
     color: "text-green-400",
     bg: "bg-green-500/10",
     border: "border-green-500/20",
-    title: "Get standardized data",
+    title: "Monitor and get alerted",
     description:
-      "Every result comes back as a STAC item with COG assets. Same schema, same coordinate system, same band names — regardless of provider.",
-    code: `{ "type": "FeatureCollection",\n  "features": [...],  // STAC items\n  "context": { "returned": 12 } }`,
+      "Save areas of interest with watch goals. ASTRA runs daily change detection, builds time series trends, and fires alerts when something significant happens.",
+    code: `# Automated monitoring\nPOST /api/monitors\n{\n  "name": "Amazon Deforestation Watch",\n  "watchFor": "deforestation or fire",\n  "indices": ["ndvi", "nbr"]\n}\n# → Daily checks · AI reports · Alerts`,
   },
 ];
 
@@ -55,11 +55,11 @@ export function HowItWorks() {
         >
           <Badge variant="primary" className="mb-4">How It Works</Badge>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            From coordinates to imagery in{" "}
-            <span className="text-primary">one request</span>
+            Search, analyze, and monitor{" "}
+            <span className="text-primary">any location on Earth</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            No provider SDKs to install. No format conversion. No separate auth tokens. Three steps, done.
+            From raw satellite pixels to AI-generated insights in three steps. No provider SDKs, no format conversion, no separate credentials.
           </p>
         </motion.div>
 
@@ -122,9 +122,9 @@ export function HowItWorks() {
           transition={{ duration: 0.4, delay: 0.3 }}
         >
           {[
-            { value: "1", label: "API call" },
-            { value: "3+", label: "providers searched" },
-            { value: "~400ms", label: "median latency" },
+            { value: "6", label: "providers in one call" },
+            { value: "5", label: "spectral indices" },
+            { value: "AI", label: "change analysis" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
               <div className="text-2xl font-bold text-primary">{stat.value}</div>

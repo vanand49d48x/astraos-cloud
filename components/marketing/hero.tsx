@@ -112,7 +112,7 @@ export function Hero() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/25 bg-primary/8 text-primary text-sm mb-8"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              Live — Sentinel-2 · Landsat · Planetary Computer
+              Live · 6 providers · AI-powered analysis
             </motion.div>
 
             <motion.h1
@@ -121,11 +121,10 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.08 }}
             >
-              One API for{" "}
+              From satellite data to{" "}
               <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                every satellite
-              </span>{" "}
-              on Earth
+                AI-powered insights
+              </span>
             </motion.h1>
 
             <motion.p
@@ -134,10 +133,10 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.15 }}
             >
-              Satellite imagery comes from dozens of providers — each with a different API,
-              format, and contract. ASTRA OS gives you a{" "}
-              <span className="text-foreground font-medium">single endpoint</span> that searches
-              all of them at once and returns standardized data you can use immediately.
+              ASTRA OS unifies 6 satellite providers — Sentinel, Landsat, Planet Labs, UP42, Airbus, and more — into a{" "}
+              <span className="text-foreground font-medium">single API</span> that searches,
+              analyzes, and monitors any location on Earth. Get spectral indices, change detection, and
+              LLM-powered reports without managing a single provider contract.
             </motion.p>
 
             {/* Before / After pill */}
@@ -151,21 +150,21 @@ export function Hero() {
                 <div className="pr-4">
                   <p className="text-[10px] uppercase tracking-widest text-destructive/70 font-medium mb-2">Without ASTRA</p>
                   <div className="space-y-1.5">
-                    {["Sentinel API  →  SAFE format", "Landsat API  →  GeoTIFF", "Planet API  →  NITF format"].map((t) => (
+                    {["Sentinel → SAFE format", "Planet → NITF + auth", "UP42 → OAuth2 + STAC", "Airbus → opensearch API"].map((t) => (
                       <div key={t} className="flex items-center gap-2 text-xs text-muted-foreground/60">
                         <span className="w-1 h-1 rounded-full bg-destructive/50 shrink-0" />
                         {t}
                       </div>
                     ))}
                     <div className="text-[10px] text-destructive/60 mt-2 pt-2 border-t border-white/[0.05]">
-                      3 contracts · 3 invoices · 3 formats
+                      6 contracts · 6 invoices · 6 formats
                     </div>
                   </div>
                 </div>
                 <div className="pl-4">
                   <p className="text-[10px] uppercase tracking-widest text-primary/70 font-medium mb-2">With ASTRA</p>
                   <div className="space-y-1.5">
-                    {["Sentinel  ─┐", "Landsat   ─┼─▶  ASTRA  ─▶  COG+STAC", "Planet    ─┘"].map((t) => (
+                    {["Sentinel ─┐", "Planet   ─┤", "UP42     ─┼─▶ ASTRA ─▶ AI insights", "Airbus   ─┤", "Landsat  ─┘"].map((t) => (
                       <div key={t} className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
                         {t}
                       </div>
@@ -203,9 +202,10 @@ export function Hero() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <ProviderDot label="sentinel-2-l2a" color="bg-green-500" />
-              <ProviderDot label="landsat-c2-l2" color="bg-blue-500" />
-              <ProviderDot label="planetary-computer" color="bg-purple-500" />
+              <ProviderDot label="sentinel-2" color="bg-green-500" />
+              <ProviderDot label="planet-labs" color="bg-yellow-500" />
+              <ProviderDot label="up42" color="bg-blue-500" />
+              <ProviderDot label="airbus" color="bg-purple-500" />
             </motion.div>
           </div>
 
@@ -234,8 +234,9 @@ export function Hero() {
                 <p className="text-sm">Querying providers...</p>
                 <div className="flex items-center gap-3 text-[10px]">
                   <ProviderDot label="Sentinel-2" color="bg-green-500" />
-                  <ProviderDot label="Landsat" color="bg-blue-500" />
-                  <ProviderDot label="Planetary Computer" color="bg-purple-500" />
+                  <ProviderDot label="Planet Labs" color="bg-yellow-500" />
+                  <ProviderDot label="UP42" color="bg-blue-500" />
+                  <ProviderDot label="Airbus" color="bg-purple-500" />
                 </div>
               </div>
             ) : scenes.length > 0 ? (
@@ -284,17 +285,19 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.5 }}
               className="mt-4 rounded-lg bg-[#0a0a14] border border-white/[0.06] p-4 font-mono text-xs leading-relaxed overflow-x-auto"
             >
-              <span className="text-muted-foreground/50"># Search all providers in one call</span>
+              <span className="text-muted-foreground/50"># Analyze any location — AI insights in one call</span>
               {"\n"}
               <span className="text-blue-400">curl</span>
-              <span className="text-foreground/80">{` "https://www.astraos.cloud/api/v1/search?`}</span>
-              {"\n"}
-              <span className="text-foreground/80">{`  bbox=-122.5,37.7,-122.3,37.9&`}</span>
-              {"\n"}
-              <span className="text-foreground/80">{`  datetime=2025-09-01/2026-01-01" \\`}</span>
+              <span className="text-foreground/80">{` -X POST "https://www.astraos.cloud/api/v1/analyze" \\`}</span>
               {"\n"}
               <span className="text-foreground/80">{`  -H `}</span>
               <span className="text-green-400">"Authorization: Bearer astra_..."</span>
+              {"\n"}
+              <span className="text-foreground/80">{`  -d '{"bbox":[-122.5,37.7,-122.3,37.9],`}</span>
+              {"\n"}
+              <span className="text-foreground/80">{`      "indices":["ndvi","nbr","ndwi"]}'`}</span>
+              {"\n"}
+              <span className="text-muted-foreground/50"># → NDVI 0.72 (Dense vegetation) · NBR 0.61 · Flood risk: Low</span>
             </motion.div>
           </motion.div>
         </div>

@@ -91,7 +91,10 @@ export function Sidebar() {
       {/* Footer */}
       <div className="p-3 border-t border-white/[0.06]">
         <button
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={async () => {
+            await signOut({ redirect: false });
+            window.location.href = "/";
+          }}
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all w-full"
           title={collapsed ? "Sign Out" : undefined}
         >
