@@ -48,6 +48,14 @@ interface SearchResult {
   warnings?: string[];
 }
 
+function getThumbnail(scene: STACItem): string | null {
+  const assets = scene.assets ?? {};
+  for (const key of ["rendered_preview", "thumbnail", "overview", "visual"]) {
+    if (assets[key]?.href) return assets[key].href;
+  }
+  return null;
+}
+
 export default function ExplorerPage() {
   const [bbox, setBbox] = useState("-122.52,37.70,-122.35,37.82");
   const [dateRange, setDateRange] = useState("2024-06-01/2024-12-31");
@@ -221,7 +229,20 @@ export default function ExplorerPage() {
                         : "border-white/[0.06] hover:border-white/10 hover:bg-white/[0.02]"
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start gap-2.5">
+                      {/* Thumbnail */}
+                      {getThumbnail(scene) ? (
+                        <img
+                          src={getThumbnail(scene)!}
+                          alt=""
+                          className="w-12 h-12 rounded object-cover flex-shrink-0 bg-white/5"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded flex-shrink-0 bg-white/5 flex items-center justify-center">
+                          <Cloud className="w-5 h-5 text-muted-foreground/40" />
+                        </div>
+                      )}
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-mono truncate">{scene.id}</p>
                         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -260,8 +281,9 @@ export default function ExplorerPage() {
             <ExplorerMap
               bbox={bbox}
               loading={loading}
-              sceneBboxes={results?.features.map((f) => f.bbox).filter(Boolean) as number[][] || []}
-              selectedSceneBbox={selectedScene?.bbox || null}
+              scenes={results?.features ?? []}
+              selectedScene={selectedScene}
+              onSceneClick={setSelectedScene}
             />
           </div>
 
@@ -282,6 +304,17 @@ export default function ExplorerPage() {
                   <X className="w-4 h-4 text-muted-foreground" />
                 </button>
               </div>
+
+              {/* Thumbnail preview */}
+              {getThumbnail(selectedScene) && (
+                <div className="mb-4 -mx-6 -mt-1">
+                  <img
+                    src={getThumbnail(selectedScene)!}
+                    alt={`Satellite imagery for ${selectedScene.id}`}
+                    className="w-full h-40 object-cover"
+                  />
+                </div>
+              )}
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div>
