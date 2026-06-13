@@ -43,7 +43,11 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ keys });
+    const plan = teamMember ? (await prisma.team.findUnique({ where: { id: teamMember.teamId }, select: { plan: true } }))?.plan ?? "free" : "free";
+    const keyLimits: Record<string, number> = { free: 1, starter: 5, pro: 999, enterprise: 999 };
+    const keyLimit = keyLimits[plan] ?? 1;
+
+    return NextResponse.json({ keys, plan, keyLimit });
   } catch (err) {
     console.error("List keys error:", err);
     return NextResponse.json(

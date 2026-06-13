@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
-import { Key, Plus, Copy, Trash2, Check, AlertTriangle } from "lucide-react";
+import { Key, Plus, Copy, Trash2, Check, AlertTriangle, Zap } from "lucide-react";
+import Link from "next/link";
 
 interface ApiKey {
   id: string;
@@ -20,11 +21,14 @@ interface ApiKey {
 
 export default function ApiKeysPage() {
   const [keys, setKeys] = useState<ApiKey[]>([]);
+  const [keyLimit, setKeyLimit] = useState<number>(1);
+  const [plan, setPlan] = useState<string>("free");
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [newKeyName, setNewKeyName] = useState("");
   const [createdKey, setCreatedKey] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [revoking, setRevoking] = useState<string | null>(null);
 
@@ -34,6 +38,8 @@ export default function ApiKeysPage() {
       if (res.ok) {
         const data = await res.json();
         setKeys(data.keys);
+        setKeyLimit(data.keyLimit ?? 1);
+        setPlan(data.plan ?? "free");
       }
     } catch {
       // Fail silently
@@ -49,6 +55,7 @@ export default function ApiKeysPage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setCreating(true);
+    setCreateError(null);
 
     try {
       const res = await fetch("/api/keys", {
@@ -57,15 +64,18 @@ export default function ApiKeysPage() {
         body: JSON.stringify({ name: newKeyName }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        const data = await res.json();
         setCreatedKey(data.key);
         setNewKeyName("");
         setShowCreate(false);
         fetchKeys();
+      } else {
+        setCreateError(data.error ?? "Failed to create key");
       }
     } catch {
-      // Handle error
+      setCreateError("Something went wrong. Please try again.");
     } finally {
       setCreating(false);
     }
@@ -104,11 +114,46 @@ export default function ApiKeysPage() {
             Manage your API keys for accessing the ASTRA OS API
           </p>
         </div>
-        <Button onClick={() => setShowCreate(true)}>
+        <Button
+          onClick={() => { setCreateError(null); setShowCreate(true); }}
+          disabled={!loading && activeKeys.length >= keyLimit}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Create Key
         </Button>
       </div>
+
+      {/* Key limit bar */}
+      {!loading && (
+        <div className="flex items-center justify-between bg-card border border-white/[0.06] rounded-xl px-4 py-3">
+          <div className="flex items-center gap-3">
+            <Key className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">
+              <span className={activeKeys.length >= keyLimit ? "text-destructive font-semibold" : "text-foreground font-medium"}>
+                {activeKeys.length}
+              </span>
+              {" / "}
+              <span className="text-foreground font-medium">
+                {keyLimit === 999 ? "Unlimited" : keyLimit}
+              </span>
+              {" "}active keys
+              {" · "}
+              <span className="capitalize">{plan}</span> plan
+            </span>
+            {activeKeys.length >= keyLimit && (
+              <Badge variant="destructive">Limit reached</Badge>
+            )}
+          </div>
+          {activeKeys.length >= keyLimit && keyLimit < 999 && (
+            <Link href="/dashboard/billing">
+              <Button size="sm" className="gap-1.5">
+                <Zap className="w-3.5 h-3.5" />
+                Upgrade plan
+              </Button>
+            </Link>
+          )}
+        </div>
+      )}
 
       {/* Created key banner */}
       {createdKey && (
@@ -249,6 +294,20 @@ export default function ApiKeysPage() {
               placeholder="e.g., Production, Development, CI/CD"
               required
             />
+
+            {createError && (
+              <div className="flex items-start gap-2 bg-destructive/10 border border-destructive/30 rounded-lg px-3 py-2.5">
+                <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm text-destructive">{createError}</p>
+                  {createError.includes("limit") && (
+                    <Link href="/dashboard/billing" className="text-xs text-primary underline mt-1 inline-block">
+                      Upgrade your plan →
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="flex justify-end gap-3">
               <Button
