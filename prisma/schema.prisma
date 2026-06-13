@@ -15,6 +15,9 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
+  userType      String?      // "developer" | "business"
+  useCase       String?      // chosen sub-category during onboarding
+  onboardedAt   DateTime?
   accounts      Account[]
   sessions      Session[]
   apiKeys       ApiKey[]

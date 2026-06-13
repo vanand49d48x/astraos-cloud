@@ -11,11 +11,11 @@ export async function GET() {
 
     const userId = session.user.id;
 
-    // Get user's team
-    const teamMember = await prisma.teamMember.findFirst({
-      where: { userId },
-      include: { team: true },
-    });
+    // Get user + their team
+    const [user, teamMember] = await Promise.all([
+      prisma.user.findUnique({ where: { id: userId }, select: { userType: true, useCase: true } }),
+      prisma.teamMember.findFirst({ where: { userId }, include: { team: true } }),
+    ]);
 
     if (!teamMember) {
       return NextResponse.json({
@@ -24,6 +24,7 @@ export async function GET() {
         activeKeys: 0,
         plan: "Free",
         recentRequests: [],
+        userType: user?.userType ?? null,
       });
     }
 
@@ -79,6 +80,8 @@ export async function GET() {
       activeKeys,
       plan: teamMember.team.plan.charAt(0).toUpperCase() + teamMember.team.plan.slice(1),
       recentRequests,
+      userType: user?.userType ?? null,
+      useCase: user?.useCase ?? null,
     });
   } catch (err) {
     console.error("Dashboard API error:", err);
